@@ -35,9 +35,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_secure_storage: ^9.0.0 # Secure storage for tokens and sensitive data
   flutter_dotenv: ^5.1.0 # Environment variables for API keys and URLs
   provider: ^6.1.2 # State management
+  go_router: ^14.3.0 # Modern routing solution for Flutter
   logger: ^2.0.2 # Logging utility
   http_certificate_pinning: ^3.0.0 # Certificate pinning for secure HTTPS
   dio: ^5.7.0 # HTTP client for API requests
@@ -79,6 +82,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - .env
+    - lib/localization/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
