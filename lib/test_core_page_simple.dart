@@ -5,11 +5,9 @@ import 'package:provider/provider.dart';
 
 // Core imports
 import 'core/theme.dart';
-import 'core/providers/auth_provider.dart';
-import 'core/providers/user_provider.dart';
-import 'core/providers/notification_provider.dart';
-import 'core/providers/cache_provider.dart';
+import 'core/providers/simple_providers.dart';
 import 'core/utils/logger.dart';
+import 'main.dart'; // Pour accéder à SimpleAuthProvider
 
 class TestCorePage extends StatefulWidget {
   const TestCorePage({super.key});
@@ -131,44 +129,110 @@ class _TestCorePageState extends State<TestCorePage> {
         _buildSectionHeader('📦 Test des Providers'),
         const SizedBox(height: ECommerceTheme.spacingM),
 
-        Consumer<AuthProvider>(
+        Consumer<SimpleAuthProvider>(
           builder: (context, authProvider, child) {
             return _buildProviderStatusCard(
-              '🔐 AuthProvider',
-              'État: ${authProvider.isLoading ? "Chargement..." : "Prêt"}',
+              '🔐 SimpleAuthProvider',
+              'État: ${authProvider.isLoading ? "Chargement..." : "Prêt"} - Connecté: ${authProvider.isLoggedIn}',
               !authProvider.isLoading,
             );
           },
         ),
 
-        Consumer<UserProvider>(
+        Consumer<SimpleUserProvider>(
           builder: (context, userProvider, child) {
             return _buildProviderStatusCard(
-              '👤 UserProvider',
-              'État: Prêt',
-              true,
+              '👤 SimpleUserProvider',
+              'État: ${userProvider.isLoading ? "Chargement..." : "Prêt"} - Erreur: ${userProvider.hasError}',
+              !userProvider.isLoading,
             );
           },
         ),
 
-        Consumer<NotificationProvider>(
+        Consumer<SimpleNotificationProvider>(
           builder: (context, notificationProvider, child) {
             return _buildProviderStatusCard(
-              '🔔 NotificationProvider',
-              'État: Prêt',
+              '🔔 SimpleNotificationProvider',
+              'État: Prêt - Notifications: ${notificationProvider.notifications.length} (${notificationProvider.unreadCount} non lues)',
               true,
             );
           },
         ),
 
-        Consumer<CacheProvider>(
+        Consumer<SimpleCacheProvider>(
           builder: (context, cacheProvider, child) {
             return _buildProviderStatusCard(
-              '💾 CacheProvider',
-              'État: Prêt',
+              '💾 SimpleCacheProvider',
+              'État: Prêt - Éléments: ${cacheProvider.itemCount} - Taille: ${cacheProvider.cacheSize} bytes',
               true,
             );
           },
+        ),
+
+        // Section de boutons de test
+        const SizedBox(height: ECommerceTheme.spacingM),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(ECommerceTheme.spacingM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Actions de test',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: ECommerceTheme.spacingM),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Provider.of<SimpleUserProvider>(
+                          context,
+                          listen: false,
+                        ).loadUserData();
+                      },
+                      child: const Text('Charger données utilisateur'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Provider.of<SimpleNotificationProvider>(
+                          context,
+                          listen: false,
+                        ).addNotification(
+                          'Test',
+                          'Notification de test ${DateTime.now().millisecondsSinceEpoch}',
+                        );
+                      },
+                      child: const Text('Ajouter notification'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Provider.of<SimpleCacheProvider>(
+                          context,
+                          listen: false,
+                        ).cache(
+                          'test_${DateTime.now().millisecondsSinceEpoch}',
+                          'Valeur de test',
+                        );
+                      },
+                      child: const Text('Ajouter au cache'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Provider.of<SimpleCacheProvider>(
+                          context,
+                          listen: false,
+                        ).clear();
+                      },
+                      child: const Text('Vider cache'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
