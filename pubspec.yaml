@@ -1,8 +1,8 @@
 # This is the pubspec.yaml file for a Flutter project.
 # It defines the metadata for the project, including its name, description,
 # version, dependencies, and other configurations.
-# For more information on pubspec.yaml, see https://dart.dev/tools/pub/pubspec
-# For more information on Flutter packages, see https://flutter.dev/developing-packages
+# For more information on pubspec.yaml, see https:///dart.dev/tools/pub/pubspec
+# For more information on Flutter packages, see https:///flutter.dev/developing-packages
 name: koutonou
 description: "A multi-vendor marketplace connected to PrestaShop API"
 # The following line prevents the package from being accidentally published to
@@ -15,10 +15,10 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# Read more about Android versioning at https:///developer.android.com/studio/publish/versioning
 # In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
 # Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# https:///developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
@@ -54,6 +54,9 @@ dev_dependencies:
   hive_generator: ^2.0.0
   build_runner: ^2.4.6
   mockito: ^5.4.4
+  coverage: ^1.6.3
+  path: ^1.9.0
+  mocktail: ^1.0.2
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -63,7 +66,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
+# following page: https:///dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -78,10 +81,10 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
+  # https:///flutter.dev/to/resolution-aware-images
 
   # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
+  # https:///flutter.dev/to/asset-from-package
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
@@ -101,4 +104,4 @@ flutter:
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+  # see https:///flutter.dev/to/font-from-package

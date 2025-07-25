@@ -1,7 +1,7 @@
-// auth_service.dart
-// Provides authentication services for user login and signup via the PrestaShop proxy PHP.
-// Ensures secure handling of credentials using flutter_secure_storage, validates inputs,
-// and integrates with ApiClient for HTTP requests and BaseResponse for response parsing.
+/// auth_service.dart
+/// Provides authentication services for user login and signup via the PrestaShop proxy PHP.
+/// Ensures secure handling of credentials using flutter_secure_storage, validates inputs,
+/// and integrates with ApiClient for HTTP requests and BaseResponse for response parsing.
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:koutonou/core/api/api_client.dart';
@@ -10,28 +10,28 @@ import 'package:koutonou/core/utils/error_handler.dart';
 import 'package:koutonou/core/utils/logger.dart';
 
 class AuthService {
-  // Singleton instance for centralized authentication service
+  /// Singleton instance for centralized authentication service
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
   AuthService._internal();
 
-  // ApiClient instance for HTTP requests
+  /// ApiClient instance for HTTP requests
   final _apiClient = ApiClient();
 
-  // Logger instance for debugging
+  /// Logger instance for debugging
   final _logger = AppLogger();
 
-  // Error handler instance for user-friendly error messages
+  /// Error handler instance for user-friendly error messages
   final _errorHandler = ErrorHandler();
 
-  // Secure storage for tokens and user data
+  /// Secure storage for tokens and user data
   final _secureStorage = const FlutterSecureStorage();
 
-  /// Logs in a user with email and password.
-  /// Returns user data (e.g., { id: 1, email: "user@example.com" }) on success.
-  /// Throws an error with a user-friendly message on failure.
+  //// Logs in a user with email and password.
+  //// Returns user data (e.g., { id: 1, email: "user@example.com" }) on success.
+  //// Throws an error with a user-friendly message on failure.
   Future<Map<String, dynamic>> login(String email, String password) async {
-    // Validate inputs
+    /// Validate inputs
     if (!_isValidEmail(email)) {
       throw _errorHandler.handleError(Exception('Invalid email format'));
     }
@@ -59,7 +59,7 @@ class AuthService {
             'Login failed: Unknown error';
       }
 
-      // Store user data securely
+      /// Store user data securely
       await _secureStorage.write(
         key: 'user_data',
         value: baseResponse.data.toString(),
@@ -73,11 +73,11 @@ class AuthService {
     }
   }
 
-  /// Signs up a new user with the provided customer data.
-  /// Returns the user ID (e.g., { id: 1 }) on success.
-  /// Throws an error with a user-friendly message on failure.
+  //// Signs up a new user with the provided customer data.
+  //// Returns the user ID (e.g., { id: 1 }) on success.
+  //// Throws an error with a user-friendly message on failure.
   Future<Map<String, dynamic>> signup(Map<String, dynamic> customerData) async {
-    // Validate required fields
+    /// Validate required fields
     if (!_isValidEmail(customerData['email'])) {
       throw _errorHandler.handleError(Exception('Invalid email format'));
     }
@@ -102,7 +102,7 @@ class AuthService {
             'Signup failed: Unknown error';
       }
 
-      // Store user data securely
+      /// Store user data securely
       await _secureStorage.write(
         key: 'user_data',
         value: baseResponse.data.toString(),
@@ -116,7 +116,7 @@ class AuthService {
     }
   }
 
-  /// Logs out the user by clearing stored data.
+  //// Logs out the user by clearing stored data.
   Future<void> logout() async {
     try {
       _logger.debug('Logging out user');
@@ -128,12 +128,12 @@ class AuthService {
     }
   }
 
-  /// Retrieves stored user data from secure storage.
+  //// Retrieves stored user data from secure storage.
   Future<Map<String, dynamic>?> getUserData() async {
     try {
       final userData = await _secureStorage.read(key: 'user_data');
       if (userData != null) {
-        // Basic parsing of stored data (assumes JSON-like string)
+        /// Basic parsing of stored data (assumes JSON-like string)
         return Map<String, dynamic>.from(
           userData.replaceAll('{', '').replaceAll('}', '').split(',').asMap().map(
                 (k, v) => MapEntry(
@@ -150,7 +150,7 @@ class AuthService {
     }
   }
 
-  /// Validates email format using a basic regex.
+  //// Validates email format using a basic regex.
   bool _isValidEmail(String? email) {
     if (email == null || email.isEmpty) return false;
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');

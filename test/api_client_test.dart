@@ -1,82 +1,56 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:dio/dio.dart';
 import 'package:koutonou/core/api/api_client.dart';
+import 'package:koutonou/core/api/api_config.dart';
+import 'package:koutonou/core/utils/error_handler.dart';
+import 'package:koutonou/core/utils/logger.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: '.env');
-  final apiClient = ApiClient();
+import 'package:mockito/annotations.dart';
+import 'api_client_test.mocks.dart';
 
-  // Test GET request (e.g., fetch products)
-  try {
-    final response = await apiClient.get('products', queryParameters: {
-      'limit': 10,
-      'offset': 0,
-    });
-    print('GET response: $response');
-  } catch (e) {
-    print('Error: $e');
-  }
+@GenerateMocks([Dio])
+void main() {
+  late MockDio mockDio;
+  late ApiClient apiClient;
 
-  // Test POST request (e.g., create a product)
-  try {
-    final response = await apiClient.post('products', data: {
-      'name': 'Test Product',
-      'price': '29.99',
-    });
-    print('POST response: $response');
-  } catch (e) {
-    print('Error: $e');
-  }
-}
+  setUp(() {
+    mockDio = MockDio();
+    /// Injecte ton mock dans ApiConfig si nécessaire
+    ApiConfig().dio.httpClientAdapter = mockDio.httpClientAdapter;
+    apiClient = ApiClient();
+  });
 
-
-/* this is a test file for the ApiClient for the file error_model.dart.
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:koutonou/core/api/api_client.dart';
-import 'package:koutonou/core/models/error_model.dart';
-
-Future<void> main() async {
-  await dotenv.load(fileName: '.env');
-  final apiClient = ApiClient();
-
-  try {
-    await apiClient.get('invalid_resource'); // Simulate an invalid request
-  } catch (e) {
-    if (e is String) {
-      final errorModel = ErrorModel(
-        code: 400,
-        message: e,
+  group('ApiClient', () {
+    test('get() should return data on successful response', () async {
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: '?resource=products'),
+        statusCode: 200,
+        data: {'products': []},
       );
-      print('User Message: ${errorModel.userMessage}');
-    }
-  }
-}*/
 
+      when(mockDio.get(
+        any,
+        queryParameters: anyNamed('queryParameters'),
+      )).thenAnswer((_) async => mockResponse);
 
+      final result = await apiClient.get('products');
 
-/* this is a test file for the ApiClient for the file base_response.dart.
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:koutonou/core/api/api_client.dart';
-import 'package:koutonou/core/models/base_response.dart';
-
-Future<void> main() async {
-  await dotenv.load(fileName: '.env');
-  final apiClient = ApiClient();
-
-  try {
-    final response = await apiClient.get('products', queryParameters: {
-      'limit': 10,
-      'offset': 0,
+      expect(result, isA<Map<String, dynamic>>());
+      expect(result['products'], isA<List>());
     });
-    final baseResponse = BaseResponse<List<Map<String, dynamic>>>.fromJson(
-      response,
-      (json) => (json as List<dynamic>).cast<Map<String, dynamic>>(),
-    );
-    print('Success: ${baseResponse.success}');
-    print('Data: ${baseResponse.data}');
-    print('Error: ${baseResponse.error?.toJson()}');
-    print('User Message: ${baseResponse.userMessage}');
-  } catch (e) {
-    print('Error: $e');
-  }
+
+    test('get() should throw error on invalid response', () async {
+      final mockResponse = Response(
+        requestOptions: RequestOptions(path: '?resource=products'),
+        statusCode: 200,
+        data: 'invalid response',
+      );
+
+      when(mockDio.get(any, queryParameters: anyNamed('queryParameters')))
+          .thenAnswer((_) async => mockResponse);
+
+      expect(() => apiClient.get('products'), throwsA(isA<Exception>()));
+    });
+  });
 }
-*/

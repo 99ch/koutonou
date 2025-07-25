@@ -1,7 +1,7 @@
-// main.dart
-// Entry point of the Koutonou application. Initializes the app with MaterialApp,
-// sets up themes, providers, and navigation. Ensures secure initialization by loading
-// environment variables and handling authentication state.
+/// main.dart
+/// Entry point of the Koutonou application. Initializes the app with MaterialApp,
+/// sets up themes, providers, and navigation. Ensures secure initialization by loading
+/// environment variables and handling authentication state.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,9 +9,10 @@ import 'package:koutonou/core/providers/auth_provider.dart';
 import 'package:koutonou/core/theme.dart';
 import 'package:koutonou/core/utils/constants.dart';
 import 'package:koutonou/core/utils/logger.dart';
+import 'package:koutonou/test_core_page.dart'; // Page de test temporaire
 import 'package:provider/provider.dart';
 
-// Temporary placeholders for views (to be implemented in modules)
+/// Temporary placeholders for views (to be implemented in modules)
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
   @override
@@ -29,7 +30,31 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
-      body: const Center(child: Text('Home View (Placeholder)')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Home View (Placeholder)'),
+            const SizedBox(height: 20),
+            // Bouton temporaire pour tester le core
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TestCorePage(),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('🧪 Tester Core Components'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -57,13 +82,13 @@ class CartView extends StatelessWidget {
 }
 
 Future<void> main() async {
-  // Ensure Flutter bindings are initialized
+  /// Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables from .env file
+  /// Load environment variables from .env file
   await dotenv.load(fileName: '.env');
 
-  // Initialize logger
+  /// Initialize logger
   final logger = AppLogger();
   logger.info('Starting Koutonou application');
 
@@ -77,22 +102,22 @@ class KoutonouApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Initialize AuthProvider and call its initialize method
+        /// Initialize AuthProvider and call its initialize method
         ChangeNotifierProvider(create: (_) => AuthProvider()..initialize()),
       ],
       child: MaterialApp(
         title: 'Koutonou',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system, // Use system theme (light/dark)
-        // Define navigation routes
+        themeMode: ThemeMode.system, /// Use system theme (light/dark)
+        /// Define navigation routes
         routes: {
           AppConstants.homeRoute: (context) => const HomeView(),
           AppConstants.loginRoute: (context) => const LoginView(),
           AppConstants.productListRoute: (context) => const ProductListView(),
           AppConstants.cartRoute: (context) => const CartView(),
         },
-        // Determine initial route based on authentication state
+        /// Determine initial route based on authentication state
         home: Consumer<AuthProvider>(
           builder: (context, authProvider, _) {
             if (authProvider.isLoading) {

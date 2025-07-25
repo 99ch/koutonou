@@ -1,42 +1,42 @@
-// error_handler.dart
-// Provides centralized error handling for API requests, local exceptions, and app errors.
-// Ensures secure and user-friendly error messages, avoiding exposure of sensitive details
-// in production. Uses debug mode to provide detailed logs for developers.
+/// error_handler.dart
+/// Provides centralized error handling for API requests, local exceptions, and app errors.
+/// Ensures secure and user-friendly error messages, avoiding exposure of sensitive details
+/// in production. Uses debug mode to provide detailed logs for developers.
 
 import 'package:dio/dio.dart';
 import 'package:koutonou/core/utils/constants.dart';
 import 'package:koutonou/core/utils/logger.dart';
 
 class ErrorHandler {
-  // Singleton instance for centralized error handling
+  /// Singleton instance for centralized error handling
   static final ErrorHandler _instance = ErrorHandler._internal();
   factory ErrorHandler() => _instance;
   ErrorHandler._internal();
 
-  // Logger instance for debugging errors
+  /// Logger instance for debugging errors
   final _logger = AppLogger();
 
-  /// Handles errors and returns a user-friendly message.
-  /// In debug mode, logs detailed error information.
+  //// Handles errors and returns a user-friendly message.
+  //// In debug mode, logs detailed error information.
   String handleError(dynamic error, [StackTrace? stackTrace]) {
     String userMessage = 'An unexpected error occurred. Please try again.';
     String debugMessage = '';
 
     if (error is DioException) {
-      // Handle Dio-specific errors (HTTP-related)
+      /// Handle Dio-specific errors (HTTP-related)
       userMessage = _handleDioError(error);
       debugMessage = 'DioException: ${error.message}, Type: ${error.type}, Response: ${error.response?.data}';
     } else if (error is TypeError) {
-      // Handle type casting errors
+      /// Handle type casting errors
       userMessage = 'Invalid data format received. Please try again.';
       debugMessage = 'TypeError: $error';
     } else {
-      // Handle generic errors
+      /// Handle generic errors
       userMessage = 'Something went wrong. Please try again later.';
       debugMessage = 'Unknown error: $error';
     }
 
-    // Log detailed error information in debug mode only
+    /// Log detailed error information in debug mode only
     if (AppConstants.isDebugMode) {
       _logger.error(_sanitizeMessage(debugMessage), error, stackTrace);
     }
@@ -44,7 +44,7 @@ class ErrorHandler {
     return _sanitizeMessage(userMessage);
   }
 
-  /// Handles Dio-specific errors and maps HTTP status codes to user-friendly messages.
+  //// Handles Dio-specific errors and maps HTTP status codes to user-friendly messages.
   String _handleDioError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
@@ -65,7 +65,7 @@ class ErrorHandler {
     }
   }
 
-  /// Maps HTTP status codes to user-friendly messages.
+  //// Maps HTTP status codes to user-friendly messages.
   String _handleHttpStatusCode(int? statusCode) {
     switch (statusCode) {
       case 400:
@@ -83,15 +83,15 @@ class ErrorHandler {
     }
   }
 
-  /// Sanitizes error messages to prevent exposure of sensitive data.
+  //// Sanitizes error messages to prevent exposure of sensitive data.
   String _sanitizeMessage(String message) {
     String sanitized = message;
-    // Remove sensitive data like API keys, tokens, or passwords
+    /// Remove sensitive data like API keys, tokens, or passwords
     sanitized = sanitized.replaceAll(RegExp(r'api_key=[^&]*'), 'api_key=****');
     sanitized = sanitized.replaceAll(RegExp(r'passwd=[^&]*'), 'passwd=****');
     sanitized = sanitized.replaceAll(RegExp(r'token=[^&]*'), 'token=****');
-    // Remove sensitive server details (e.g., internal URLs)
-    sanitized = sanitized.replaceAll(RegExp(r'https?://[^/]+'), '[server]');
+    /// Remove sensitive server details (e.g., internal URLs)
+    sanitized = sanitized.replaceAll(RegExp(r'https?:///[^/]+'), '[server]');
     return sanitized;
   }
 }

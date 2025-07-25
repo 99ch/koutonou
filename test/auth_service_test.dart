@@ -5,7 +5,7 @@ Future<void> main() async {
   await dotenv.load(fileName: '.env');
   final authService = AuthService();
 
-  // Test login
+  /// Test login
   try {
     final userData = await authService.login(
       'test@example.com',
@@ -16,7 +16,7 @@ Future<void> main() async {
     print('Login error: $e');
   }
 
-  // Test signup
+  /// Test signup
   try {
     final userData = await authService.signup({
       'email': 'newuser@example.com',
@@ -29,18 +29,18 @@ Future<void> main() async {
     print('Signup error: $e');
   }
 
-  // Test invalid email
+  /// Test invalid email
   try {
     await authService.login('invalid_email', 'password123');
   } catch (e) {
-    print('Invalid email error: $e'); // Should print: "Invalid email format"
+    print('Invalid email error: $e'); /// Should print: "Invalid email format"
   }
 
-  // Test logout
+  /// Test logout
   try {
     await authService.logout();
     final userData = await authService.getUserData();
-    print('User data after logout: $userData'); // Should print: null
+    print('User data after logout: $userData'); /// Should print: null
   } catch (e) {
     print('Logout error: $e');
   }
