@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -14,31 +15,32 @@ import 'localization/localization_test_page.dart';
 
 // Test pages
 import 'test_core_page_simple.dart';
+import 'shared_widgets_test_page.dart';
+
+/// Helper pour les logs de debug (seulement en mode debug)
+void _debugLog(String message) {
+  if (kDebugMode) {
+    debugPrint(message);
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Gestion globale des erreurs
   FlutterError.onError = (FlutterErrorDetails details) {
-    print('🔥 ERREUR FLUTTER: ${details.exception}');
-    print('📍 STACK: ${details.stack}');
+    // En production, on pourrait envoyer à un service de monitoring
+    debugPrint('Erreur Flutter: ${details.exception}');
   };
 
   try {
-    print('🚀 Initialisation de l\'application...');
-
     // Initialiser la localisation
     await LocalizationService().initialize();
-    print('✅ Localisation initialisée');
-
-    // Pré-initialiser les services critiques
-    print('📦 Pré-initialisation des services...');
 
     runApp(const KoutonouApp());
-    print('✅ Application lancée');
   } catch (e, stackTrace) {
-    print('❌ ERREUR lors de l\'initialisation: $e');
-    print('📍 STACK: $stackTrace');
+    debugPrint('Erreur lors de l\'initialisation: $e');
+    debugPrint('Stack: $stackTrace');
 
     // Application de fallback en cas d'erreur
     runApp(
@@ -83,28 +85,28 @@ class _KoutonouAppState extends State<KoutonouApp> {
 
   Future<void> _initializeAsync() async {
     try {
-      print('🔧 Initialisation asynchrone...');
+      _debugLog('Initialisation asynchrone...');
 
       // Petit délai pour s'assurer que le contexte est prêt
       await Future.delayed(const Duration(milliseconds: 100));
 
-      print('📦 Création de l\'AuthProvider simple...');
+      _debugLog('Création de l\'AuthProvider simple...');
       // Créer une version simplifiée de l'AuthProvider pour les tests
       _authProvider = SimpleAuthProvider();
-      print('✅ AuthProvider créé');
+      _debugLog('AuthProvider créé');
 
-      print('🗺️ Création du router...');
+      _debugLog('Création du router...');
       _router = _createRouter();
-      print('✅ Router créé');
+      _debugLog('Router créé');
 
       setState(() {
         _isInitialized = true;
       });
 
-      print('✅ Initialisation terminée avec succès');
+      _debugLog('Initialisation terminée avec succès');
     } catch (e, stackTrace) {
-      print('❌ ERREUR dans l\'initialisation: $e');
-      print('📍 STACK: $stackTrace');
+      _debugLog('Erreur dans l\'initialisation: $e');
+      _debugLog('Stack: $stackTrace');
       setState(() {
         _initError = e.toString();
       });
@@ -112,41 +114,41 @@ class _KoutonouAppState extends State<KoutonouApp> {
   }
 
   GoRouter _createRouter() {
-    print('🚀 Création du router...');
+    _debugLog('Création du router...');
     return GoRouter(
       initialLocation: '/home',
-      debugLogDiagnostics: true,
+      debugLogDiagnostics: kDebugMode,
       errorBuilder: (context, state) {
-        print('❌ Erreur de route: ${state.error}');
+        _debugLog('Erreur de route: ${state.error}');
         return const ErrorPage();
       },
       redirect: (context, state) {
         try {
           final location = state.fullPath;
-          print('🔄 Redirection check pour: $location');
+          _debugLog('Redirection check pour: $location');
 
           // Si AuthProvider n'est pas encore initialisé, pas de redirection
           if (_authProvider == null) {
-            print('⏳ AuthProvider non initialisé, pas de redirection');
+            _debugLog('AuthProvider non initialisé, pas de redirection');
             return null;
           }
 
           // Routes protégées - rediriger si non connecté
           if (_requiresAuth(location) && !_authProvider!.isLoggedIn) {
-            print('🔒 Route protégée, redirection vers login');
+            _debugLog('Route protégée, redirection vers login');
             return '/auth/login';
           }
 
           // Routes d'authentification - rediriger si déjà connecté
           if (location!.startsWith('/auth/') && _authProvider!.isLoggedIn) {
-            print('👤 Déjà connecté, redirection vers home');
+            _debugLog('Déjà connecté, redirection vers home');
             return '/home';
           }
 
-          print('✅ Pas de redirection nécessaire');
+          _debugLog('Pas de redirection nécessaire');
           return null;
         } catch (e) {
-          print('❌ ERREUR dans redirect: $e');
+          _debugLog('Erreur dans redirect: $e');
           return '/home'; // Fallback sécurisé
         }
       },
@@ -226,14 +228,14 @@ class _KoutonouAppState extends State<KoutonouApp> {
 
   /// Construit les routes
   List<RouteBase> _buildRoutes() {
-    print('📋 Construction des routes...');
+    _debugLog('Construction des routes...');
     try {
       return [
         // Route racine
         GoRoute(
           path: '/',
           redirect: (context, state) {
-            print('🏠 Redirection racine vers /home');
+            _debugLog('Redirection racine vers /home');
             return '/home';
           },
         ),
@@ -243,7 +245,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/home',
           name: 'home',
           builder: (context, state) {
-            print('🏠 Construction de HomePage');
+            _debugLog('Construction de HomePage');
             return const HomePage();
           },
         ),
@@ -253,7 +255,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/auth/login',
           name: 'login',
           builder: (context, state) {
-            print('🔑 Construction de LoginPage');
+            _debugLog('Construction de LoginPage');
             return const LoginPage();
           },
         ),
@@ -262,7 +264,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/auth/register',
           name: 'register',
           builder: (context, state) {
-            print('📝 Construction de RegisterPage');
+            _debugLog('Construction de RegisterPage');
             return const RegisterPage();
           },
         ),
@@ -272,7 +274,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/test/core',
           name: 'test-core',
           builder: (context, state) {
-            print('🔧 Construction de TestCorePage');
+            _debugLog('Construction de TestCorePage');
             return const TestCorePage();
           },
         ),
@@ -281,7 +283,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/test/localization',
           name: 'test-localization',
           builder: (context, state) {
-            print('🌍 Construction de LocalizationTestPage');
+            _debugLog('Construction de LocalizationTestPage');
             return const LocalizationTestPage();
           },
         ),
@@ -290,7 +292,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/test/routing',
           name: 'test-routing',
           builder: (context, state) {
-            print('🗺️ Construction de RoutingTestPage');
+            _debugLog('Construction de RoutingTestPage');
             return const RoutingTestPage();
           },
         ),
@@ -300,7 +302,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/products',
           name: 'products',
           builder: (context, state) {
-            print('🛍️ Construction de ProductsPage');
+            _debugLog('Construction de ProductsPage');
             return const ProductsPage();
           },
         ),
@@ -309,7 +311,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/cart',
           name: 'cart',
           builder: (context, state) {
-            print('🛒 Construction de CartPage');
+            _debugLog('Construction de CartPage');
             return const CartPage();
           },
         ),
@@ -318,14 +320,24 @@ class _KoutonouAppState extends State<KoutonouApp> {
           path: '/profile',
           name: 'profile',
           builder: (context, state) {
-            print('👤 Construction de ProfilePage');
+            _debugLog('Construction de ProfilePage');
             return const ProfilePage();
+          },
+        ),
+
+        // Route de test pour les widgets partagés
+        GoRoute(
+          path: '/test/widgets',
+          name: 'test-widgets',
+          builder: (context, state) {
+            _debugLog('Construction de SharedWidgetsTestPage');
+            return const SharedWidgetsTestPage();
           },
         ),
       ];
     } catch (e, stackTrace) {
-      print('❌ ERREUR lors de la construction des routes: $e');
-      print('📍 STACK: $stackTrace');
+      _debugLog('Erreur lors de la construction des routes: $e');
+      _debugLog('Stack: $stackTrace');
       rethrow;
     }
   }
@@ -352,19 +364,19 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    print('🏠 HomePage initialisée');
+    _debugLog('HomePage initialisée');
   }
 
   @override
   Widget build(BuildContext context) {
-    print('🏠 HomePage build() appelé - index: $_selectedIndex');
+    _debugLog('HomePage build() appelé - index: $_selectedIndex');
     try {
       return Scaffold(
         body: _pages[_selectedIndex],
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: (index) {
-            print('📱 Navigation vers onglet: $index');
+            _debugLog('Navigation vers onglet: $index');
             setState(() {
               _selectedIndex = index;
             });
@@ -383,7 +395,7 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     } catch (e) {
-      print('❌ ERREUR dans HomePage build: $e');
+      _debugLog('Erreur dans HomePage build: $e');
       return Scaffold(body: Center(child: Text('Erreur: $e')));
     }
   }
@@ -486,6 +498,10 @@ class RoutingTestPage extends StatelessWidget {
               _NavigationButton(
                 'Localisation Test',
                 () => context.go('/test/localization'),
+              ),
+              _NavigationButton(
+                'Widgets Partagés',
+                () => context.go('/test/widgets'),
               ),
             ]),
 
@@ -681,13 +697,13 @@ class SimpleAuthProvider with ChangeNotifier {
 
   /// Initialise le provider (ne fait rien pour la version simple)
   Future<void> initialize() async {
-    print('📦 SimpleAuthProvider initialisé');
+    _debugLog('SimpleAuthProvider initialisé');
     // Pas d'initialisation complexe pour les tests
   }
 
   /// Connexion simplifiée pour les tests
   Future<void> login(String email, String password) async {
-    print('🔑 Connexion simplifiée: $email');
+    _debugLog('Connexion simplifiée: $email');
     try {
       _isLoading = true;
       _errorMessage = null;
@@ -704,9 +720,9 @@ class SimpleAuthProvider with ChangeNotifier {
         'role': 'user',
       };
       _isLoggedIn = true;
-      print('✅ Connexion réussie');
+      _debugLog('Connexion réussie');
     } catch (e) {
-      print('❌ Erreur de connexion: $e');
+      _debugLog('Erreur de connexion: $e');
       _errorMessage = 'Erreur de connexion';
     } finally {
       _isLoading = false;
@@ -716,7 +732,7 @@ class SimpleAuthProvider with ChangeNotifier {
 
   /// Déconnexion simplifiée
   Future<void> logout() async {
-    print('👋 Déconnexion');
+    _debugLog('Déconnexion');
     _isLoggedIn = false;
     _userData = null;
     _errorMessage = null;
@@ -725,7 +741,7 @@ class SimpleAuthProvider with ChangeNotifier {
 
   /// Inscription simplifiée
   Future<void> signup(Map<String, dynamic> customerData) async {
-    print('📝 Inscription simplifiée');
+    _debugLog('Inscription simplifiée');
     await login(customerData['email'], 'password');
   }
 }

@@ -1,7 +1,14 @@
 // Providers simplifiés pour les tests du router
 // Ces providers n'ont pas de dépendances complexes et permettent de tester l'architecture
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+/// Helper pour les logs de debug (seulement en mode debug)
+void _debugLog(String message) {
+  if (kDebugMode) {
+    debugPrint(message);
+  }
+}
 
 /// Version simplifiée du UserProvider pour les tests
 class SimpleUserProvider with ChangeNotifier {
@@ -30,17 +37,17 @@ class SimpleUserProvider with ChangeNotifier {
         'email': 'test@example.com',
         'preferences': {'theme': 'auto', 'language': 'fr'},
       };
-      print('✅ SimpleUserProvider: Données utilisateur chargées');
+      _debugLog('SimpleUserProvider: Données utilisateur chargées');
     } catch (e) {
       _errorMessage = 'Erreur de chargement';
-      print('❌ SimpleUserProvider: $e');
+      _debugLog('SimpleUserProvider: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Simule la mise à jour du profil
+  /// Simule la mise à jour du profil du profil utilisateur
   Future<void> updateProfile(Map<String, dynamic> data) async {
     _isLoading = true;
     notifyListeners();
@@ -49,10 +56,10 @@ class SimpleUserProvider with ChangeNotifier {
 
     try {
       _userData = {..._userData ?? {}, ...data};
-      print('✅ SimpleUserProvider: Profil mis à jour');
+      _debugLog('✅ SimpleUserProvider: Profil mis à jour');
     } catch (e) {
       _errorMessage = 'Erreur de mise à jour';
-      print('❌ SimpleUserProvider: $e');
+      _debugLog('❌ SimpleUserProvider: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -85,7 +92,7 @@ class SimpleNotificationProvider with ChangeNotifier {
     _notifications.insert(0, notification);
     _unreadCount++;
     notifyListeners();
-    print('📱 SimpleNotificationProvider: Notification ajoutée - $title');
+    _debugLog('📱 SimpleNotificationProvider: Notification ajoutée - $title');
   }
 
   /// Marque une notification comme lue
@@ -95,7 +102,7 @@ class SimpleNotificationProvider with ChangeNotifier {
       _notifications[index]['isRead'] = true;
       _unreadCount = (_unreadCount - 1).clamp(0, _notifications.length);
       notifyListeners();
-      print('✅ SimpleNotificationProvider: Notification marquée comme lue');
+      _debugLog('✅ SimpleNotificationProvider: Notification marquée comme lue');
     }
   }
 
@@ -106,7 +113,7 @@ class SimpleNotificationProvider with ChangeNotifier {
     }
     _unreadCount = 0;
     notifyListeners();
-    print(
+    _debugLog(
       '✅ SimpleNotificationProvider: Toutes les notifications marquées comme lues',
     );
   }
@@ -143,7 +150,7 @@ class SimpleNotificationProvider with ChangeNotifier {
     _unreadCount = _notifications.where((n) => !n['isRead']).length;
     _isLoading = false;
     notifyListeners();
-    print('✅ SimpleNotificationProvider: Notifications chargées');
+    _debugLog('✅ SimpleNotificationProvider: Notifications chargées');
   }
 }
 
@@ -168,17 +175,17 @@ class SimpleCacheProvider with ChangeNotifier {
 
     _updateCacheSize();
     notifyListeners();
-    print('💾 SimpleCacheProvider: Valeur mise en cache - $key');
+    _debugLog('💾 SimpleCacheProvider: Valeur mise en cache - $key');
   }
 
   /// Récupère une valeur du cache
   T? get<T>(String key) {
     final cached = _cache[key];
     if (cached != null) {
-      print('✅ SimpleCacheProvider: Valeur récupérée du cache - $key');
+      _debugLog('✅ SimpleCacheProvider: Valeur récupérée du cache - $key');
       return cached['value'] as T?;
     }
-    print('❌ SimpleCacheProvider: Valeur non trouvée dans le cache - $key');
+    _debugLog('❌ SimpleCacheProvider: Valeur non trouvée dans le cache - $key');
     return null;
   }
 
@@ -192,7 +199,7 @@ class SimpleCacheProvider with ChangeNotifier {
     if (_cache.remove(key) != null) {
       _updateCacheSize();
       notifyListeners();
-      print('🗑️ SimpleCacheProvider: Valeur supprimée du cache - $key');
+      _debugLog('🗑️ SimpleCacheProvider: Valeur supprimée du cache - $key');
     }
   }
 
@@ -201,7 +208,7 @@ class SimpleCacheProvider with ChangeNotifier {
     _cache.clear();
     _cacheSize = 0;
     notifyListeners();
-    print('🧹 SimpleCacheProvider: Cache vidé');
+    _debugLog('🧹 SimpleCacheProvider: Cache vidé');
   }
 
   /// Simule un nettoyage du cache
@@ -225,7 +232,7 @@ class SimpleCacheProvider with ChangeNotifier {
     _updateCacheSize();
     _isLoading = false;
     notifyListeners();
-    print(
+    _debugLog(
       '🧹 SimpleCacheProvider: Nettoyage terminé, ${expiredKeys.length} entrées supprimées',
     );
   }
