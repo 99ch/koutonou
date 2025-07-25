@@ -1,97 +1,17 @@
-/// main.dart
-/// Entry point of the Koutonou application. Initializes the app with MaterialApp,
-/// sets up themes, providers, and navigation. Ensures secure initialization by loading
-/// environment variables and handling authentication state.
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:koutonou/core/providers/auth_provider.dart';
-import 'package:koutonou/core/theme.dart';
-import 'package:koutonou/core/utils/constants.dart';
-import 'package:koutonou/core/utils/logger.dart';
-import 'package:koutonou/test_core_page.dart'; // Page de test temporaire
 import 'package:provider/provider.dart';
 
-/// Temporary placeholders for views (to be implemented in modules)
-class LoginView extends StatelessWidget {
-  const LoginView({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: const Center(child: Text('Login View (Placeholder)')),
-    );
-  }
-}
+// Core imports
+import 'core/theme.dart';
+import 'core/providers/auth_provider.dart';
+import 'core/providers/user_provider.dart';
+import 'core/providers/notification_provider.dart';
+import 'core/providers/cache_provider.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Home View (Placeholder)'),
-            const SizedBox(height: 20),
-            // Bouton temporaire pour tester le core
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TestCorePage(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('🧪 Tester Core Components'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// Test page
+import 'test_core_page_simple.dart';
 
-class ProductListView extends StatelessWidget {
-  const ProductListView({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Products')),
-      body: const Center(child: Text('Product List View (Placeholder)')),
-    );
-  }
-}
-
-class CartView extends StatelessWidget {
-  const CartView({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Cart')),
-      body: const Center(child: Text('Cart View (Placeholder)')),
-    );
-  }
-}
-
-Future<void> main() async {
-  /// Ensure Flutter bindings are initialized
-  WidgetsFlutterBinding.ensureInitialized();
-
-  /// Load environment variables from .env file
-  await dotenv.load(fileName: '.env');
-
-  /// Initialize logger
-  final logger = AppLogger();
-  logger.info('Starting Koutonou application');
-
+void main() {
   runApp(const KoutonouApp());
 }
 
@@ -102,34 +22,22 @@ class KoutonouApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        /// Initialize AuthProvider and call its initialize method
-        ChangeNotifierProvider(create: (_) => AuthProvider()..initialize()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => CacheProvider()),
       ],
       child: MaterialApp(
-        title: 'Koutonou',
+        title: 'Koutonou - Test Architecture Core',
+        debugShowCheckedModeBanner: false,
+
+        // Application du thème
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system, /// Use system theme (light/dark)
-        /// Define navigation routes
-        routes: {
-          AppConstants.homeRoute: (context) => const HomeView(),
-          AppConstants.loginRoute: (context) => const LoginView(),
-          AppConstants.productListRoute: (context) => const ProductListView(),
-          AppConstants.cartRoute: (context) => const CartView(),
-        },
-        /// Determine initial route based on authentication state
-        home: Consumer<AuthProvider>(
-          builder: (context, authProvider, _) {
-            if (authProvider.isLoading) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              );
-            }
-            return authProvider.isLoggedIn
-                ? const HomeView()
-                : const LoginView();
-          },
-        ),
+        themeMode: ThemeMode.system,
+
+        // Page de test comme home
+        home: const TestCorePage(),
       ),
     );
   }

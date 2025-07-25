@@ -43,6 +43,7 @@ dependencies:
   dio: ^5.7.0 # HTTP client for API requests
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  path_provider: ^2.1.4 # For file system access (needed by cache_service)
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
