@@ -1,4 +1,6 @@
 ![Flutter CI](https://github.com/99ch/koutonou/actions/workflows/flutter_ci.yml/badge.svg)
+[![Deploy to GitHub Pages](https://github.com/99ch/koutonou/actions/workflows/deploy.yml/badge.svg)](https://99ch.github.io/koutonou/)
+
 
 # koutonou
 
