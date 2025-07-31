@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Core imports
 import 'core/theme.dart';
@@ -16,6 +17,7 @@ import 'localization/localization_test_page.dart';
 // Test pages
 import 'test_core_page_simple.dart';
 import 'shared_widgets_test_page.dart';
+import 'mvp_generation_test_page.dart';
 
 /// Helper pour les logs de debug (seulement en mode debug)
 void _debugLog(String message) {
@@ -26,6 +28,15 @@ void _debugLog(String message) {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load environment variables from .env file
+  try {
+    await dotenv.load(fileName: '.env');
+    _debugLog('Environment variables loaded successfully');
+  } catch (e) {
+    _debugLog('Failed to load .env file: $e');
+    // Continue without .env file - will use defaults
+  }
 
   // Gestion globale des erreurs
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -297,6 +308,15 @@ class _KoutonouAppState extends State<KoutonouApp> {
           },
         ),
 
+        GoRoute(
+          path: '/test/mvp-generation',
+          name: 'test-mvp-generation',
+          builder: (context, state) {
+            _debugLog('Construction de MvpGenerationTestPage');
+            return const MvpGenerationTestPage();
+          },
+        ),
+
         // Routes principales
         GoRoute(
           path: '/products',
@@ -502,6 +522,10 @@ class RoutingTestPage extends StatelessWidget {
               _NavigationButton(
                 'Widgets Partagés',
                 () => context.go('/test/widgets'),
+              ),
+              _NavigationButton(
+                'Génération MVP',
+                () => context.go('/test/mvp-generation'),
               ),
             ]),
 

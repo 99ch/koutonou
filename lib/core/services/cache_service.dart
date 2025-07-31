@@ -1,4 +1,3 @@
-
 // Provides intelligent caching capabilities for the Koutonou application.
 // This service handles multi-level caching (memory, disk), TTL management,
 // business data caching, image caching, and cache synchronization.
@@ -43,19 +42,44 @@ class CacheService {
     if (_isInitialized) return;
 
     try {
-      // Get cache directory
-      _cacheDirectory = await _getCacheDirectory();
+      // Sur le web, on utilise seulement le cache mémoire
+      if (kIsWeb) {
+        _logger.info('Web platform detected: using memory-only cache');
+        _cacheDirectory = null;
+        _isInitialized = true;
+        return;
+      }
 
-      // Load existing cache from disk
-      await _loadCacheFromDisk();
+      // Get cache directory - handle web platform gracefully
+      try {
+        _cacheDirectory = await _getCacheDirectory();
+        _logger.info('Disk cache directory available');
+      } catch (e) {
+        // Si on ne peut pas obtenir le répertoire de cache, on continue en mode mémoire uniquement
+        _logger.warning(
+          'Cache directory not available, using memory-only cache: $e',
+        );
+        _cacheDirectory = null;
+      }
+
+      // Load existing cache from disk only if directory is available
+      if (_cacheDirectory != null) {
+        await _loadCacheFromDisk();
+      }
 
       // Clean expired items on startup
       await cleanExpired();
 
       _isInitialized = true;
-      _logger.info('CacheService initialized successfully');
+      _logger.info(
+        'CacheService initialized successfully ${_cacheDirectory != null ? 'with disk cache' : '(memory-only mode)'}',
+      );
     } catch (e, stackTrace) {
       _logger.error('Failed to initialize CacheService', e, stackTrace);
+      // Ne pas faire échouer l'initialisation, juste utiliser le mode mémoire
+      _isInitialized = true;
+      _cacheDirectory = null;
+      _logger.warning('CacheService fallback to memory-only mode');
     }
   }
 
@@ -70,13 +94,15 @@ class CacheService {
       _incrementStat('misses');
       _logger.debug('Cache miss for key: $key');
 
-      // Try to load from disk
-      final diskItem = await _loadFromDisk<T>(key);
-      if (diskItem != null) {
-        _memoryCache[key] = diskItem;
-        _incrementStat('hits');
-        _logger.debug('Cache hit from disk for key: $key');
-        return diskItem.data as T;
+      // Try to load from disk (only if disk cache is available)
+      if (_cacheDirectory != null) {
+        final diskItem = await _loadFromDisk<T>(key);
+        if (diskItem != null) {
+          _memoryCache[key] = diskItem;
+          _incrementStat('hits');
+          _logger.debug('Cache hit from disk for key: $key');
+          return diskItem.data as T;
+        }
       }
 
       return null;
@@ -125,8 +151,10 @@ class CacheService {
       _memoryCache[key] = item;
       _currentCacheSize += dataSize;
 
-      // Save to disk asynchronously
-      _saveToDisk(key, item);
+      // Save to disk asynchronously (only if disk cache is available)
+      if (_cacheDirectory != null) {
+        _saveToDisk(key, item);
+      }
 
       _logger.debug(
         'Cached item with key: $key, size: ${dataSize}B, TTL: $ttl',
@@ -151,8 +179,10 @@ class CacheService {
       _logger.debug('Deleted cached item with key: $key');
     }
 
-    // Delete from disk
-    await _deleteFromDisk(key);
+    // Delete from disk (only if disk cache is available)
+    if (_cacheDirectory != null) {
+      await _deleteFromDisk(key);
+    }
   }
 
   /// Clear all cache
@@ -163,8 +193,10 @@ class CacheService {
     _currentCacheSize = 0;
     _resetStats();
 
-    // Clear disk cache
-    await _clearDiskCache();
+    // Clear disk cache (only if disk cache is available)
+    if (_cacheDirectory != null) {
+      await _clearDiskCache();
+    }
 
     _logger.info('Cache cleared');
   }
@@ -175,8 +207,11 @@ class CacheService {
 
     final item = _memoryCache[key];
     if (item == null) {
-      // Check disk
-      return await _existsOnDisk(key);
+      // Check disk (only if disk cache is available)
+      if (_cacheDirectory != null) {
+        return await _existsOnDisk(key);
+      }
+      return false;
     }
 
     return item.isValid;
@@ -190,8 +225,12 @@ class CacheService {
 
     final item = _memoryCache[key];
     if (item == null) {
-      final diskItem = await _loadFromDisk(key);
-      return diskItem?.isExpired ?? true;
+      // Check disk (only if disk cache is available)
+      if (_cacheDirectory != null) {
+        final diskItem = await _loadFromDisk(key);
+        return diskItem?.isExpired ?? true;
+      }
+      return true;
     }
 
     return item.isExpired;
@@ -213,7 +252,10 @@ class CacheService {
       );
 
       _memoryCache[key] = newItem;
-      _saveToDisk(key, newItem);
+      // Save to disk (only if disk cache is available)
+      if (_cacheDirectory != null) {
+        _saveToDisk(key, newItem);
+      }
 
       _logger.debug('Refreshed cache item with key: $key');
     }
@@ -471,14 +513,20 @@ class CacheService {
 
   /// Get cache directory
   Future<Directory> _getCacheDirectory() async {
-    final cacheDir = await getTemporaryDirectory();
-    final appCacheDir = Directory('${cacheDir.path}/koutonou_cache');
+    try {
+      final cacheDir = await getTemporaryDirectory();
+      final appCacheDir = Directory('${cacheDir.path}/koutonou_cache');
 
-    if (!await appCacheDir.exists()) {
-      await appCacheDir.create(recursive: true);
+      if (!await appCacheDir.exists()) {
+        await appCacheDir.create(recursive: true);
+      }
+
+      return appCacheDir;
+    } catch (e) {
+      // Sur le web, path_provider n'est pas disponible
+      _logger.warning('getTemporaryDirectory not available (web platform)');
+      rethrow; // Laisser l'erreur remonter pour être gérée par initialize()
     }
-
-    return appCacheDir;
   }
 
   /// Load cache from disk on startup

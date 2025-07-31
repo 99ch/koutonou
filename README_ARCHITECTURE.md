@@ -1,116 +1,321 @@
 # Architecture du projet Koutonou
 
-## Structure générale
+## Vue d'ensemble
 
-Ce projet Flutter suit une architecture modulaire avec une séparation claire des responsabilités :
+**Koutonou** est une marketplace multi-vendeurs connectée à l'API PrestaShop, développée en Flutter avec une architecture modulaire robuste et scalable.
+
+## Stack technique
+
+- **Framework** : Flutter ^3.8.1
+- **Gestion d'état** : Provider ^6.1.2
+- **Navigation** : GoRouter ^14.3.0 (navigation moderne et type-safe)
+- **Stockage sécurisé** : Flutter Secure Storage ^9.0.0
+- **Cache local** : Hive ^2.2.3
+- **Requêtes HTTP** : Dio ^5.7.0 avec Certificate Pinning
+- **Logs** : Logger ^2.0.2
+- **Environnement** : Flutter DotEnv ^5.1.0
+- **Internationalisation** : Flutter Localizations intégrée
+
+## Structure générale
 
 ```
 lib/
-├── core/              # Fonctionnalités de base
-├── modules/           # Modules métier
-├── shared/            # Composants partagés
-├── router/            # Configuration du routage
-├── localization/      # Gestion des langues
-└── main.dart         # Point d'entrée
+├── core/              # Fondations (API, auth, modèles de base)
+├── modules/           # Modules métier (15 modules)
+├── shared/            # Composants réutilisables
+├── router/            # Configuration GoRouter + gardes
+├── localization/      # Gestion multilingue
+├── main.dart         # Point d'entrée avec MultiProvider
+└── test_*.dart       # Pages de test pour validation
 ```
 
-## Modules
+## Architecture des modules
 
-Chaque module suit la même structure :
+Chaque module suit une structure standardisée :
 
-- **models/** : Modèles de données
-- **providers/** : Gestion d'état (Riverpod)
-- **services/** : Services métier
-- **views/** : Écrans
-- **widgets/** : Composants UI spécifiques au module
-- **providers.dart** : Exports centralisés
+```
+modules/[nom_module]/
+├── models/           # Modèles de données avec sérialisation JSON
+├── providers/        # Gestion d'état (ChangeNotifier + Provider)
+├── services/         # Logique métier et appels API
+├── views/           # Écrans et pages UI
+├── widgets/         # Composants UI spécifiques
+└── providers.dart   # Exports centralisés des providers
+```
 
-## Core
+### Modules disponibles
 
-- **api/** : Configuration et client API
-- **models/** : Modèles de base
-- **providers/** : Providers globaux
-- **services/** : Services globaux
-- **theme/** : Configuration du thème
-- **utils/** : Utilitaires
-- **exceptions/** : Gestion des erreurs
+1. **carts** - Gestion des paniers
+2. **cms** - Contenu managé
+3. **configs** - Configuration système
+4. **customers** - Gestion des clients
+5. **customizations** - Personnalisations
+6. **employees** - Gestion des employés
+7. **home** - Page d'accueil
+8. **orders** - Gestion des commandes
+9. **products** - Catalogue produits
+10. **search** - Recherche avancée
+11. **shipping** - Expédition
+12. **stocks** - Gestion des stocks
+13. **stores** - Gestion des magasins
+14. **support** - Support client
+15. **taxes** - Gestion fiscale
 
-## Shared
+## Core - Fondations du système
 
-- **widgets/** : Composants UI réutilisables
-- **extensions/** : Extensions Dart
-- **utils/** : Utilitaires partagés
+Le dossier `core/` contient toutes les fonctionnalités de base :
 
-## Ordre de développement et tests
+### api/
 
-### 1. **core/** - Fondations
+- **ApiClient** : Client HTTP centralisé avec Dio
+- **ApiConfig** : Configuration des endpoints et paramètres
+- **Certificate Pinning** : Sécurité HTTPS renforcée
 
-**Tests à effectuer :**
+### models/
 
-- Test des utilitaires (`constants.dart`, `logger.dart`)
-- Test des modèles de base (`BaseResponse`, `ErrorModel`)
-- Test de la gestion d'erreurs (`ErrorHandler`)
-- Test de la configuration API (`ApiClient`, `ApiConfig`)
-- Test des services d'authentification
-- **Point de contrôle :** Vérifier que l'API répond correctement
+- **BaseResponse** : Modèle de réponse API standardisé
+- **ErrorModel** : Gestion unifiée des erreurs
 
-**Page de test manuelle pour core/ :**
-Créer une page temporaire `lib/test_core_page.dart` qui teste :
+### providers/
 
-1. **API** → Bouton "Test API" qui fait un appel GET/POST
-2. **Modèles** → Afficher sérialisation/désérialisation JSON
-3. **Erreurs** → Bouton "Test Erreur" qui déclenche une exception
-4. **Auth** → Boutons "Login/Logout" avec état affiché
-5. **Logger** → Messages de log visibles dans la console
-6. **Constants** → Afficher les valeurs des constantes
+- **AuthProvider** : Gestion de l'authentification globale
+- **SimpleAuthProvider** : Version simplifiée pour les tests
+- **SimpleUserProvider** : Gestion des données utilisateur
+- **SimpleNotificationProvider** : Système de notifications
+- **SimpleCacheProvider** : Gestion du cache local
 
-### 2. **shared/** - Composants partagés
+### services/
 
-**Tests à effectuer :**
+- **AuthService** : Service d'authentification avec PrestaShop
+- **CacheService** : Service de cache avec Hive
+- Services métier spécialisés par domaine
 
-- Test des extensions (`context_extensions.dart`)
-- Test des utilitaires de validation (`validators.dart`)
-- Test des composants UI de base (`AppButton`, `AppTextField`)
-- **Point de contrôle :** Créer une page de test avec tous les composants
+### theme/
 
-### 3. **localization/** - Internationalisation
+- **theme.dart** : Configuration du thème Material Design
+- **theme_fixed.dart** : Thème avec corrections spécifiques
+- Support du mode sombre automatique
 
-**Tests à effectuer :**
+### utils/
 
-- Test du changement de langue
-- Test des traductions manquantes
-- Test de la persistance de la langue choisie
-- **Point de contrôle :** Interface multilingue fonctionnelle
+- **Constants** : Constantes globales de l'application
+- **Logger** : Système de logs configuré
+- **ErrorHandler** : Gestion centralisée des erreurs
 
-### 4. **router/** - Navigation
+### exceptions/
 
-**Tests à effectuer :**
+- Exceptions personnalisées pour chaque type d'erreur
+- Intégration avec le système de logs
 
-- Test de navigation entre pages
-- Test des routes protégées (`RouteGuard`)
-- Test des paramètres de route
-- Test du deep linking
-- **Point de contrôle :** Navigation complète sans erreurs
+## Router - Navigation moderne
 
-### 5. **modules/** - Logique métier
+Le système de navigation utilise **GoRouter** pour une approche déclarative :
 
-**Tests par module dans l'ordre :**
+### Fonctionnalités
 
-1. **home/** - Test de la page d'accueil
-2. **customers/** - CRUD clients + navigation
-3. **products/** - CRUD produits + intégration
-4. **orders/** - Workflow complet de commande
-5. **carts/** - Gestion panier + persistance
+- **Type-safe navigation** : Navigation typée et sûre
+- **Deep linking** : Support des liens profonds
+- **Route guards** : Protection des routes avec `RouteGuard`
+- **Redirections automatiques** : Basées sur l'état d'authentification
+- **Debug mode** : Logs détaillés en développement
 
-**Tests d'intégration finale :**
+### Structure
 
-- Test du workflow complet utilisateur
-- Test de performance
-- Test sur différents devices
+- **app_router.dart** : Configuration principale du router
+- **routes.dart** : Définition des routes et noms
+- **route_guard.dart** : Gardes d'authentification
 
-## Conventions
+### Routes protégées
 
-- Nommage en snake_case pour les fichiers
-- Nommage en PascalCase pour les classes
-- Un fichier par classe
+- `/cart` - Nécessite une authentification
+- `/orders` - Nécessite une authentification
+- `/profile` - Nécessite une authentification
+
+## Shared - Composants réutilisables
+
+### widgets/
+
+- Composants UI réutilisables dans toute l'application
+- Widgets Material Design personnalisés
+- Composants de base (boutons, champs, cartes, etc.)
+
+### extensions/
+
+- **context_extensions.dart** : Extensions pour BuildContext
+- Extensions Dart pour simplifier le code
+
+### utils/
+
+- **validators.dart** : Validateurs de formulaires
+- Utilitaires partagés entre modules
+- Helpers pour les formats et conversions
+
+## Localization - Internationalisation
+
+- Support multilingue avec Flutter Localizations
+- **LocalizationService** : Service de gestion des langues
+- Fichiers de traduction organisés par module
+- Persistance de la langue choisie
+- Page de test dédiée (`localization_test_page.dart`)
+
+## Pattern d'architecture et flux de données
+
+### Gestion d'état avec Provider
+
+```dart
+// Configuration dans main.dart
+MultiProvider(
+  providers: [
+    ChangeNotifierProvider(create: (_) => SimpleAuthProvider()),
+    ChangeNotifierProvider(create: (_) => SimpleUserProvider()),
+    ChangeNotifierProvider(create: (_) => SimpleNotificationProvider()),
+    ChangeNotifierProvider(create: (_) => SimpleCacheProvider()),
+  ],
+  child: MaterialApp.router(...)
+)
+```
+
+### Flux typique d'une fonctionnalité
+
+1. **UI (View)** → Déclenche une action
+2. **Provider** → Gère l'état et appelle le service
+3. **Service** → Effectue l'appel API via ApiClient
+4. **Model** → Sérialise/désérialise les données
+5. **Provider** → Met à jour l'état
+6. **UI** → Se reconstruit automatiquement
+
+### Navigation avec GoRouter
+
+```dart
+// Navigation déclarative
+context.go('/products/123');
+context.goNamed('product-detail', params: {'id': '123'});
+
+// Avec garde d'authentification automatique
+if (RouteGuard.canAccess(context, route)) {
+  // Navigation autorisée
+}
+```
+
+## Sécurité et performances
+
+### Sécurité
+
+- **Certificate Pinning** : Protection contre les attaques MITM
+- **Secure Storage** : Stockage chiffré des tokens
+- **Route Guards** : Protection des routes sensibles
+- **Validation** : Validation côté client et serveur
+
+### Performances
+
+- **Cache local** : Hive pour le stockage rapide
+- **Lazy loading** : Chargement à la demande des modules
+- **Provider optimisé** : Reconstructions ciblées
+- **Images optimisées** : Gestion intelligente des assets
+
+## Tests et validation
+
+### Pages de test intégrées
+
+- **test_core_page.dart** : Tests des fonctionnalités core
+- **test_core_page_simple.dart** : Tests simplifiés
+- **shared_widgets_test_page.dart** : Tests des composants shared
+- **localization_test_page.dart** : Tests de l'internationalisation
+
+### Stratégie de test
+
+- **Tests unitaires** : Models, services, utils
+- **Tests de widgets** : Composants UI isolés
+- **Tests d'intégration** : Flux complets utilisateur
+- **Tests manuels** : Pages de test intégrées
+
+## Développement et débogage
+
+### Configuration de développement
+
+- **Debug mode** : Logs détaillés avec Logger
+- **Hot reload** : Développement en temps réel
+- **Environment variables** : Configuration via .env
+- **Error tracking** : Système de gestion d'erreurs
+
+### Scripts utiles
+
+- `test_core_architecture.sh` : Script de validation de l'architecture
+- Documentation API générée : `doc/api/`
+- Guides spécialisés : `ROUTER_TEST_GUIDE.md`
+
+## Roadmap de développement
+
+### Phase 1 : Fondations ✅
+
+- [x] Configuration du projet Flutter
+- [x] Architecture modulaire mise en place
+- [x] Core (API, auth, models, providers)
+- [x] Router avec GoRouter et gardes
+- [x] Système de thème et localisation
+- [x] Pages de test intégrées
+
+### Phase 2 : Modules essentiels 🚧
+
+- [ ] **home/** - Page d'accueil et navigation
+- [ ] **products/** - Catalogue et détails produits
+- [ ] **customers/** - Gestion des comptes clients
+- [ ] **carts/** - Panier et gestion des articles
+- [ ] **orders/** - Processus de commande
+
+### Phase 3 : Modules avancés 📋
+
+- [ ] **search/** - Recherche et filtres
+- [ ] **stores/** - Gestion multi-vendeurs
+- [ ] **stocks/** - Gestion des inventaires
+- [ ] **shipping/** - Options de livraison
+- [ ] **taxes/** - Calculs fiscaux
+
+### Phase 4 : Modules spécialisés 🔮
+
+- [ ] **cms/** - Contenu dynamique
+- [ ] **configs/** - Paramètres système
+- [ ] **customizations/** - Personnalisations
+- [ ] **employees/** - Back-office
+- [ ] **support/** - Service client
+
+### Phase 5 : Optimisation et déploiement 🚀
+
+- [ ] Tests d'intégration complets
+- [ ] Optimisation des performances
+- [ ] Sécurité et audit
+- [ ] Déploiement multi-plateforme
+
+## Conventions de développement
+
+### Nommage
+
+- **Fichiers** : `snake_case` (ex: `product_service.dart`)
+- **Classes** : `PascalCase` (ex: `ProductService`)
+- **Variables/méthodes** : `camelCase` (ex: `getCurrentUser()`)
+- **Constantes** : `UPPER_SNAKE_CASE` (ex: `API_BASE_URL`)
+
+### Structure des fichiers
+
+- Un fichier par classe principale
+- Imports organisés (dart, flutter, packages, local)
 - Documentation des APIs publiques
+- Tests unitaires accompagnant chaque service
+
+### Git et versioning
+
+- **Branches** : `feature/nom-fonctionnalite`
+- **Commits** : Messages descriptifs en français
+- **Tags** : Versioning sémantique (x.y.z)
+- **Pull Requests** : Review obligatoire avant merge
+
+### Performance et qualité
+
+- **Linting** : Configuration stricte avec `flutter_lints`
+- **Coverage** : Objectif de 80% de couverture de tests
+- **Performance** : Monitoring des temps de chargement
+- **Accessibilité** : Support des lecteurs d'écran
+
+---
+
+_Ce document est maintenu à jour avec l'évolution du projet. Dernière mise à jour : Juillet 2025_

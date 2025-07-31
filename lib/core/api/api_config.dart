@@ -38,8 +38,9 @@ class ApiConfig {
         sendTimeout: const Duration(milliseconds: AppConstants.apiTimeout),
         headers: _getDefaultHeaders(),
         validateStatus: (status) => status != null && status < 500,
-        followRedirects: false,
-        maxRedirects: 0,
+        // Pour le web, on simplifie les redirections pour éviter les problèmes CORS
+        followRedirects: true,
+        maxRedirects: 2,
       ),
     );
 
@@ -54,14 +55,21 @@ class ApiConfig {
     final headers = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'User-Agent': userAgent,
-      'X-Platform': 'mobile',
-      'X-App-Version': dotenv.env['APP_VERSION'] ?? '1.0.0',
     };
 
-    // Add API key if available
+    // Pour le web, on évite les headers personnalisés qui causent des problèmes CORS
+    const bool isWeb = bool.fromEnvironment('dart.library.js_util');
+
+    if (!isWeb) {
+      // Headers spécifiques aux plateformes mobiles uniquement
+      headers['User-Agent'] = userAgent;
+      headers['X-Platform'] = 'mobile';
+      headers['X-App-Version'] = dotenv.env['APP_VERSION'] ?? '1.0.0';
+    }
+
+    // Add API key as Authorization Bearer if available
     if (apiKey.isNotEmpty) {
-      headers['X-API-KEY'] = apiKey;
+      headers['Authorization'] = 'Bearer $apiKey';
     }
 
     return headers;

@@ -4,25 +4,17 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'product_model.g.dart';
+part 'upplier_model.g.dart';
 
 @JsonSerializable()
-class ProductModel {
+class SupplierModel {
   /// id (requis)
   @JsonKey(name: 'id')
   final int id;
 
-  /// id_manufacturer (optionnel)
-  @JsonKey(name: 'id_manufacturer')
-  final int? id_manufacturer;
-
-  /// reference (optionnel)
-  @JsonKey(name: 'reference')
-  final String? reference;
-
-  /// price (optionnel)
-  @JsonKey(name: 'price')
-  final String? price;
+  /// name (optionnel)
+  @JsonKey(name: 'name')
+  final String? name;
 
   /// active (optionnel)
   @JsonKey(name: 'active')
@@ -36,28 +28,26 @@ class ProductModel {
   @JsonKey(name: 'date_upd')
   final String? date_upd;
 
-  const ProductModel({
+  const SupplierModel({
     required this.id,
-    this.id_manufacturer,
-    this.reference,
-    this.price,
+    this.name,
     this.active,
     this.date_add,
     this.date_upd,
   });
 
-  factory ProductModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductModelFromJson(json);
+  factory SupplierModel.fromJson(Map<String, dynamic> json) =>
+      _$SupplierModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ProductModelToJson(this);
+  Map<String, dynamic> toJson() => _$SupplierModelToJson(this);
 
   @override
-  String toString() => 'ProductModel(id: $id)';
+  String toString() => 'SupplierModel(id: $id)';
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ProductModel && runtimeType == other.runtimeType && id == other.id;
+      other is SupplierModel && runtimeType == other.runtimeType && id == other.id;
 
   @override
   int get hashCode => id.hashCode;

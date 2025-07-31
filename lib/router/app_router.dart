@@ -13,6 +13,8 @@ import 'package:koutonou/router/route_guard.dart';
 // Pages de l'application
 import 'package:koutonou/localization/localization_test_page.dart';
 import 'package:koutonou/test_core_page_simple.dart';
+import 'package:koutonou/mvp_generation_test_page.dart';
+import 'package:koutonou/generator_test_page.dart';
 
 /// Configuration du router principal de l'application
 class AppRouter {
@@ -167,6 +169,18 @@ class AppRouter {
         path: AppRoutes.testRouting,
         name: 'test-routing',
         builder: (context, state) => const RoutingTestPage(),
+      ),
+
+      GoRoute(
+        path: '/test/mvp-generation',
+        name: 'test-mvp-generation',
+        builder: (context, state) => const MvpGenerationTestPage(),
+      ),
+
+      GoRoute(
+        path: '/test/generator',
+        name: 'test-generator',
+        builder: (context, state) => const GeneratorTestPage(),
       ),
     ];
   }
@@ -343,6 +357,7 @@ class _HomePageState extends State<HomePage> {
     const LocalizationTestPage(),
     const TestCorePage(),
     const RoutingTestPage(),
+    const GeneratorTestPage(),
   ];
 
   @override
@@ -363,6 +378,10 @@ class _HomePageState extends State<HomePage> {
           ),
           NavigationDestination(icon: Icon(Icons.build), label: 'Core Test'),
           NavigationDestination(icon: Icon(Icons.route), label: 'Router Test'),
+          NavigationDestination(
+            icon: Icon(Icons.auto_awesome),
+            label: 'Générateur',
+          ),
         ],
       ),
     );
@@ -489,6 +508,10 @@ class RoutingTestPage extends StatelessWidget {
               _NavigationButton(
                 'Localisation Test',
                 () => AppRouter.goNamed('test-localization'),
+              ),
+              _NavigationButton(
+                'Générateur Phase 2',
+                () => AppRouter.goNamed('test-generator'),
               ),
               _NavigationButton(
                 '404 Page',

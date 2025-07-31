@@ -15,7 +15,8 @@ class AppConstants {
       'https://marketplace.koutonou.com/proxy.php';
 
   /// API key loaded from .env file (never hardcoded)
-  /// static String get apiKey => dotenv.env['API_KEY'] ?? 'YOUR_PRESTASHOP_API_KEY';
+  static String get apiKey =>
+      dotenv.env['API_KEY'] ?? 'YOUR_PRESTASHOP_API_KEY';
 
   /// Timeout for API requests in milliseconds (30 seconds)
   static const int apiTimeout = 30000;
