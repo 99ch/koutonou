@@ -16,6 +16,10 @@ class ProductModel {
   @JsonKey(name: 'id_manufacturer')
   final int? id_manufacturer;
 
+  /// id_supplier (optionnel)
+  @JsonKey(name: 'id_supplier')
+  final int? id_supplier;
+
   /// reference (optionnel)
   @JsonKey(name: 'reference')
   final String? reference;
@@ -28,6 +32,10 @@ class ProductModel {
   @JsonKey(name: 'active')
   final int? active;
 
+  /// quantity (optionnel)
+  @JsonKey(name: 'quantity')
+  final int? quantity;
+
   /// date_add (optionnel)
   @JsonKey(name: 'date_add')
   final String? date_add;
@@ -39,9 +47,11 @@ class ProductModel {
   const ProductModel({
     required this.id,
     this.id_manufacturer,
+    this.id_supplier,
     this.reference,
     this.price,
     this.active,
+    this.quantity,
     this.date_add,
     this.date_upd,
   });

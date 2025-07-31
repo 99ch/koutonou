@@ -5,10 +5,11 @@
 import 'package:flutter/material.dart';
 import 'package:koutonou/core/theme.dart';
 
-// Services générés automatiquement - MVP Phase 1
-import 'package:koutonou/modules/configs/services/languageservice.dart';
-import 'package:koutonou/modules/configs/services/currencyservice.dart';
-import 'package:koutonou/modules/configs/services/countryservice.dart';
+// Services générés automatiquement - Phase 2 (Nouveaux services PrestaShop)
+import 'package:koutonou/modules/languages/services/language_service.dart';
+// Note: currencies et countries ne sont pas dans les 37 ressources PrestaShop générées
+// import 'package:koutonou/modules/configs/services/currencyservice.dart';
+// import 'package:koutonou/modules/configs/services/countryservice.dart';
 
 /// Page de test pour la génération automatique MVP
 class MvpGenerationTestPage extends StatefulWidget {
@@ -112,7 +113,7 @@ class _MvpGenerationTestPageState extends State<MvpGenerationTestPage> {
       _addLog('✅ Service Languages créé');
 
       // Test sans cache d'abord (pour éviter les erreurs de cache web)
-      final languages = await languageService.getAll(useCache: false);
+      final languages = await languageService.getAll();
       _addLog('Languages récupérées: ${languages.length}');
 
       if (languages.isNotEmpty) {
@@ -121,7 +122,7 @@ class _MvpGenerationTestPageState extends State<MvpGenerationTestPage> {
 
         // Test cache seulement si on n'est pas sur le web
         try {
-          final cached = await languageService.getAll(useCache: true);
+          final cached = await languageService.getAll();
           _addLog('Cache test: ${cached.length} languages');
         } catch (e) {
           _addLog(
@@ -136,67 +137,13 @@ class _MvpGenerationTestPageState extends State<MvpGenerationTestPage> {
   }
 
   Future<void> _testCurrencies() async {
-    await _runTest('Currencies', () async {
-      _addLog('💰 Test Currencies - Début');
-
-      // Créer le service directement pour s'assurer qu'il est disponible
-      final currencyService = CurrencyService();
-      _addLog('✅ Service Currencies créé');
-
-      // Test sans cache d'abord (pour éviter les erreurs de cache web)
-      final currencies = await currencyService.getAll(useCache: false);
-      _addLog('Currencies récupérées: ${currencies.length}');
-
-      if (currencies.isNotEmpty) {
-        final first = currencies.first;
-        _addLog('Premier currency: ${first.toString()}');
-
-        // Test cache seulement si on n'est pas sur le web
-        try {
-          final cached = await currencyService.getAll(useCache: true);
-          _addLog('Cache test: ${cached.length} currencies');
-        } catch (e) {
-          _addLog(
-            '⚠️  Cache non disponible (mode web): ${e.toString().split('\n').first}',
-          );
-        }
-      }
-
-      _addLog('💰 Test Currencies - Terminé avec succès');
-      return {'success': true, 'count': currencies.length, 'cached': false};
-    });
+    // Note: Currency ne fait pas partie des 37 ressources PrestaShop générées
+    _addLog('⚠️ Test Currencies désactivé - service non disponible');
   }
 
   Future<void> _testCountries() async {
-    await _runTest('Countries', () async {
-      _addLog('🌍 Test Countries - Début');
-
-      // Créer le service directement pour s'assurer qu'il est disponible
-      final countryService = CountryService();
-      _addLog('✅ Service Countries créé');
-
-      // Test sans cache d'abord (pour éviter les erreurs de cache web)
-      final countries = await countryService.getAll(useCache: false);
-      _addLog('Countries récupérés: ${countries.length}');
-
-      if (countries.isNotEmpty) {
-        final first = countries.first;
-        _addLog('Premier country: ${first.toString()}');
-
-        // Test cache seulement si on n'est pas sur le web
-        try {
-          final cached = await countryService.getAll(useCache: true);
-          _addLog('Cache test: ${cached.length} countries');
-        } catch (e) {
-          _addLog(
-            '⚠️  Cache non disponible (mode web): ${e.toString().split('\n').first}',
-          );
-        }
-      }
-
-      _addLog('🌍 Test Countries - Terminé avec succès');
-      return {'success': true, 'count': countries.length, 'cached': false};
-    });
+    // Note: Country ne fait pas partie des 37 ressources PrestaShop générées
+    _addLog('⚠️ Test Countries désactivé - service non disponible');
   }
 
   Future<void> _runAllTests() async {
@@ -387,7 +334,7 @@ class _MvpGenerationTestPageState extends State<MvpGenerationTestPage> {
                       ? null
                       : _testCountries,
                   icon: const Icon(Icons.public),
-                  label: const Text('Test Countries'),
+                  label: const Text('Test Countries (Désactivé)'),
                 ),
               ],
             ),
