@@ -1,4 +1,3 @@
-
 // Provides authentication services for user login and signup via the PrestaShop proxy PHP.
 // Ensures secure handling of credentials using flutter_secure_storage, validates inputs,
 // and integrates with ApiClient for HTTP requests and BaseResponse for response parsing.
