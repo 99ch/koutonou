@@ -44,9 +44,11 @@ dependencies:
   logger: ^2.0.2 # Logging utility
   http_certificate_pinning: ^3.0.0 # Certificate pinning for secure HTTPS
   dio: ^5.7.0 # HTTP client for API requests
+  http: ^1.1.2 # Standard HTTP client
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.4 # For file system access (needed by cache_service)
+  shared_preferences: ^2.3.2 # For persistent storage in cache system
   json_annotation: ^4.8.1 # For JSON serialization annotations
 
   # The following adds the Cupertino Icons font to your application.

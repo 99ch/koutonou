@@ -7,7 +7,7 @@ Nous avons créé avec succès un **générateur automatique et robuste** pour t
 ## 📊 Résultats Finaux
 
 - **37 ressources PrestaShop** générées ✅
-- **74 modèles** (37 + 37 fichiers .g.dart) ✅  
+- **74 modèles** (37 + 37 fichiers .g.dart) ✅
 - **37 services CRUD** complets ✅
 - **538+ fichiers Dart** générés ✅
 - **2 erreurs critiques → 0 erreurs** ✅
@@ -15,6 +15,7 @@ Nous avons créé avec succès un **générateur automatique et robuste** pour t
 ## 🔧 Outils Créés
 
 ### CLI Principal
+
 ```bash
 # Lister toutes les ressources
 dart tools/simple_generate.dart list
@@ -27,6 +28,7 @@ dart tools/simple_generate.dart products
 ```
 
 ### Validation
+
 ```bash
 # Valider les modules générés
 dart tools/test_generator.dart

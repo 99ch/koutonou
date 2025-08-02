@@ -310,7 +310,7 @@ class CacheService {
   /// Get cached products
   Future<List<Map<String, dynamic>>?> getCachedProducts() async {
     final products = await get<List<dynamic>>('products_all');
-    return products?.cast<Map<String, dynamic>>();
+    return products?.whereType<Map<String, dynamic>>().toList();
   }
 
   /// Cache categories
@@ -327,7 +327,7 @@ class CacheService {
   /// Get cached categories
   Future<List<Map<String, dynamic>>?> getCachedCategories() async {
     final categories = await get<List<dynamic>>('categories_all');
-    return categories?.cast<Map<String, dynamic>>();
+    return categories?.whereType<Map<String, dynamic>>().toList();
   }
 
   /// Cache user data

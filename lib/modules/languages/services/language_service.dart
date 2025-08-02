@@ -25,28 +25,20 @@ class LanguageService extends PrestaShopBaseService<LanguageModel> {
 
   /// Récupère les langues actives seulement
   Future<List<LanguageModel>> getActiveLanguages() async {
-    return await search(
-      filters: {'active': '1'},
-    );
+    return await search(filters: {'active': '1'});
   }
 
   /// Récupère la langue par défaut
   Future<LanguageModel?> getDefaultLanguage() async {
-    final languages = await search(
-      filters: {'active': '1'},
-      limit: 1,
-    );
-    
+    final languages = await search(filters: {'active': '1'}, limit: 1);
+
     return languages.isNotEmpty ? languages.first : null;
   }
 
   /// Récupère une langue par son code ISO
   Future<LanguageModel?> getByIsoCode(String isoCode) async {
-    final languages = await search(
-      filters: {'iso_code': isoCode},
-      limit: 1,
-    );
-    
+    final languages = await search(filters: {'iso_code': isoCode}, limit: 1);
+
     return languages.isNotEmpty ? languages.first : null;
   }
 
@@ -56,7 +48,7 @@ class LanguageService extends PrestaShopBaseService<LanguageModel> {
     if (language == null) {
       throw Exception('Langue non trouvée avec l\'ID: $id');
     }
-    
+
     // Créer un nouveau modèle avec le statut modifié
     final updatedLanguage = LanguageModel(
       id: language.id,
@@ -68,7 +60,7 @@ class LanguageService extends PrestaShopBaseService<LanguageModel> {
       date_format_lite: language.date_format_lite,
       date_format_full: language.date_format_full,
     );
-    
+
     return await update(id, updatedLanguage);
   }
 }

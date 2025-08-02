@@ -15,12 +15,10 @@ class PrestaShopHttpClient {
   final http.Client _httpClient;
   final AppLogger _logger;
 
-  PrestaShopHttpClient({
-    PrestaShopConfig? config,
-    http.Client? httpClient,
-  }) : _config = config ?? PrestaShopConfigManager.instance,
-       _httpClient = httpClient ?? http.Client(),
-       _logger = AppLogger();
+  PrestaShopHttpClient({PrestaShopConfig? config, http.Client? httpClient})
+    : _config = config ?? PrestaShopConfigManager.instance,
+      _httpClient = httpClient ?? http.Client(),
+      _logger = AppLogger();
 
   /// Effectue une requête GET
   Future<Map<String, dynamic>> get(
@@ -28,9 +26,11 @@ class PrestaShopHttpClient {
     Map<String, String>? queryParams,
     Map<String, String>? headers,
   }) async {
-    return _makeRequest('GET', resource, 
-      queryParams: queryParams, 
-      headers: headers
+    return _makeRequest(
+      'GET',
+      resource,
+      queryParams: queryParams,
+      headers: headers,
     );
   }
 
@@ -41,10 +41,12 @@ class PrestaShopHttpClient {
     Map<String, String>? queryParams,
     Map<String, String>? headers,
   }) async {
-    return _makeRequest('POST', resource,
+    return _makeRequest(
+      'POST',
+      resource,
       body: body,
       queryParams: queryParams,
-      headers: headers
+      headers: headers,
     );
   }
 
@@ -55,10 +57,12 @@ class PrestaShopHttpClient {
     Map<String, String>? queryParams,
     Map<String, String>? headers,
   }) async {
-    return _makeRequest('PUT', resource,
+    return _makeRequest(
+      'PUT',
+      resource,
       body: body,
       queryParams: queryParams,
-      headers: headers
+      headers: headers,
     );
   }
 
@@ -68,9 +72,11 @@ class PrestaShopHttpClient {
     Map<String, String>? queryParams,
     Map<String, String>? headers,
   }) async {
-    return _makeRequest('DELETE', resource,
+    return _makeRequest(
+      'DELETE',
+      resource,
       queryParams: queryParams,
-      headers: headers
+      headers: headers,
     );
   }
 
@@ -107,32 +113,34 @@ class PrestaShopHttpClient {
 
     try {
       late http.Response response;
-      
+
       // Effectuer la requête selon la méthode
       switch (method.toUpperCase()) {
         case 'GET':
-          response = await _httpClient.get(uri, headers: requestHeaders)
+          response = await _httpClient
+              .get(uri, headers: requestHeaders)
               .timeout(_config.timeout);
           break;
         case 'POST':
           final bodyStr = body != null ? json.encode(body) : '';
-          response = await _httpClient.post(uri, 
-              headers: requestHeaders, body: bodyStr)
+          response = await _httpClient
+              .post(uri, headers: requestHeaders, body: bodyStr)
               .timeout(_config.timeout);
           break;
         case 'PUT':
           final bodyStr = body != null ? json.encode(body) : '';
-          response = await _httpClient.put(uri, 
-              headers: requestHeaders, body: bodyStr)
+          response = await _httpClient
+              .put(uri, headers: requestHeaders, body: bodyStr)
               .timeout(_config.timeout);
           break;
         case 'DELETE':
-          response = await _httpClient.delete(uri, headers: requestHeaders)
+          response = await _httpClient
+              .delete(uri, headers: requestHeaders)
               .timeout(_config.timeout);
           break;
         default:
           throw PrestaShopException.configuration(
-            'Méthode HTTP non supportée: $method'
+            'Méthode HTTP non supportée: $method',
           );
       }
 
@@ -151,7 +159,6 @@ class PrestaShopHttpClient {
 
       // Parser la réponse JSON
       return _parseResponse(response.body);
-
     } on SocketException catch (e) {
       throw PrestaShopException.network(
         'Erreur de connexion réseau: ${e.message}',
@@ -179,10 +186,10 @@ class PrestaShopHttpClient {
   Map<String, dynamic> _parseResponse(String responseBody) {
     try {
       final decoded = json.decode(responseBody);
-      
+
       if (decoded is! Map<String, dynamic>) {
         throw PrestaShopException.parsing(
-          'Réponse JSON invalide: attendu un objet, reçu ${decoded.runtimeType}'
+          'Réponse JSON invalide: attendu un objet, reçu ${decoded.runtimeType}',
         );
       }
 
@@ -190,7 +197,7 @@ class PrestaShopHttpClient {
       if (decoded.containsKey('errors') && decoded['errors'] != null) {
         final errors = decoded['errors'];
         String errorMessage = 'Erreur PrestaShop';
-        
+
         if (errors is List && errors.isNotEmpty) {
           errorMessage = errors.first.toString();
         } else if (errors is Map) {
@@ -198,7 +205,7 @@ class PrestaShopHttpClient {
         } else {
           errorMessage = errors.toString();
         }
-        
+
         throw PrestaShopException(
           type: PrestaShopErrorType.validation,
           message: errorMessage,
@@ -207,7 +214,6 @@ class PrestaShopHttpClient {
       }
 
       return decoded;
-      
     } on FormatException catch (e) {
       throw PrestaShopException.parsing(
         'Impossible de parser la réponse JSON: ${e.message}',
@@ -225,27 +231,27 @@ class PrestaShopHttpClient {
 /// Client HTTP singleton
 class PrestaShopApiClient {
   static PrestaShopHttpClient? _instance;
-  
+
   /// Instance singleton du client
   static PrestaShopHttpClient get instance {
     if (_instance == null) {
       if (!PrestaShopConfigManager.isInitialized) {
         throw StateError(
           'PrestaShop configuration not initialized. '
-          'Call PrestaShopConfigManager.initialize() first.'
+          'Call PrestaShopConfigManager.initialize() first.',
         );
       }
       _instance = PrestaShopHttpClient();
     }
     return _instance!;
   }
-  
+
   /// Reset l'instance (utile pour les tests)
   static void reset() {
     _instance?.close();
     _instance = null;
   }
-  
+
   /// Vérifie si le client est initialisé
   static bool get isInitialized => _instance != null;
 }

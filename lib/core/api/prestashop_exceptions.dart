@@ -8,37 +8,37 @@ import 'dart:io';
 enum PrestaShopErrorType {
   /// Erreur de réseau (pas de connexion)
   network,
-  
+
   /// Timeout de requête
   timeout,
-  
+
   /// Authentification invalide (401)
   authentication,
-  
+
   /// Accès refusé (403)
   authorization,
-  
+
   /// Ressource non trouvée (404)
   notFound,
-  
+
   /// Méthode non autorisée (405)
   methodNotAllowed,
-  
+
   /// Données invalides (400, 422)
   validation,
-  
+
   /// Erreur serveur (500+)
   server,
-  
+
   /// Limite de taux dépassée (429)
   rateLimit,
-  
+
   /// Erreur de parsing JSON
   parsing,
-  
+
   /// Configuration invalide
   configuration,
-  
+
   /// Erreur inconnue
   unknown,
 }
@@ -47,19 +47,19 @@ enum PrestaShopErrorType {
 class PrestaShopException implements Exception {
   /// Type d'erreur
   final PrestaShopErrorType type;
-  
+
   /// Message d'erreur
   final String message;
-  
+
   /// Code de statut HTTP (si applicable)
   final int? statusCode;
-  
+
   /// Détails supplémentaires
   final Map<String, dynamic>? details;
-  
+
   /// Exception originale (si disponible)
   final dynamic originalException;
-  
+
   /// Timestamp de l'erreur
   final DateTime timestamp;
 
@@ -85,18 +85,19 @@ class PrestaShopException implements Exception {
     try {
       final jsonData = json.decode(responseBody);
       if (jsonData is Map<String, dynamic>) {
-        message = jsonData['message'] ?? 
-                 jsonData['error'] ?? 
-                 'Erreur HTTP $statusCode';
+        message =
+            jsonData['message'] ??
+            jsonData['error'] ??
+            'Erreur HTTP $statusCode';
         details = jsonData;
       } else {
         message = 'Erreur HTTP $statusCode';
       }
     } catch (e) {
-      message = responseBody.isNotEmpty 
-          ? responseBody.length > 200 
-              ? '${responseBody.substring(0, 200)}...'
-              : responseBody
+      message = responseBody.isNotEmpty
+          ? responseBody.length > 200
+                ? '${responseBody.substring(0, 200)}...'
+                : responseBody
           : 'Erreur HTTP $statusCode';
     }
 
@@ -110,7 +111,10 @@ class PrestaShopException implements Exception {
   }
 
   /// Créé une exception réseau
-  factory PrestaShopException.network(String message, {dynamic originalException}) {
+  factory PrestaShopException.network(
+    String message, {
+    dynamic originalException,
+  }) {
     return PrestaShopException(
       type: PrestaShopErrorType.network,
       message: message,
@@ -119,7 +123,10 @@ class PrestaShopException implements Exception {
   }
 
   /// Créé une exception de timeout
-  factory PrestaShopException.timeout(String message, {dynamic originalException}) {
+  factory PrestaShopException.timeout(
+    String message, {
+    dynamic originalException,
+  }) {
     return PrestaShopException(
       type: PrestaShopErrorType.timeout,
       message: message,
@@ -128,7 +135,10 @@ class PrestaShopException implements Exception {
   }
 
   /// Créé une exception de parsing
-  factory PrestaShopException.parsing(String message, {dynamic originalException}) {
+  factory PrestaShopException.parsing(
+    String message, {
+    dynamic originalException,
+  }) {
     return PrestaShopException(
       type: PrestaShopErrorType.parsing,
       message: message,
@@ -238,11 +248,11 @@ class PrestaShopException implements Exception {
       buffer.write(' (HTTP $statusCode)');
     }
     buffer.write(' [Type: $type]');
-    
+
     if (details != null) {
       buffer.write(' Details: $details');
     }
-    
+
     return buffer.toString();
   }
 }
@@ -251,7 +261,7 @@ class PrestaShopException implements Exception {
 class PrestaShopErrorHandler {
   /// Nombre maximum de tentatives
   static const int maxRetries = 3;
-  
+
   /// Délai de base entre les tentatives (en secondes)
   static const int baseRetryDelay = 2;
 
@@ -263,28 +273,28 @@ class PrestaShopErrorHandler {
     void Function(int attemptNumber, PrestaShopException)? onRetry,
   }) async {
     var attempt = 1;
-    
+
     while (true) {
       try {
         return await operation();
       } catch (e) {
         final prestashopException = _convertToPrestaShopException(e);
-        
+
         // Notifier l'erreur
         onError?.call(prestashopException);
-        
+
         // Vérifier si on peut/doit retry
         if (attempt >= maxRetries || !prestashopException.isRetryable) {
           throw prestashopException;
         }
-        
+
         // Notifier le retry
         onRetry?.call(attempt, prestashopException);
-        
+
         // Calculer le délai (exponential backoff)
         final delay = _calculateRetryDelay(attempt, prestashopException);
         await Future.delayed(Duration(seconds: delay));
-        
+
         attempt++;
       }
     }
@@ -295,28 +305,28 @@ class PrestaShopErrorHandler {
     if (error is PrestaShopException) {
       return error;
     }
-    
+
     if (error is SocketException) {
       return PrestaShopException.network(
         'Erreur de connexion réseau: ${error.message}',
         originalException: error,
       );
     }
-    
+
     if (error is HttpException) {
       return PrestaShopException.network(
         'Erreur HTTP: ${error.message}',
         originalException: error,
       );
     }
-    
+
     if (error is FormatException) {
       return PrestaShopException.parsing(
         'Erreur de format de données: ${error.message}',
         originalException: error,
       );
     }
-    
+
     // Erreur générique
     return PrestaShopException(
       type: PrestaShopErrorType.unknown,
@@ -332,7 +342,7 @@ class PrestaShopErrorHandler {
     if (recommendedDelay > 0) {
       return recommendedDelay;
     }
-    
+
     // Sinon utiliser exponential backoff
     return baseRetryDelay * (1 << (attempt - 1)); // 2, 4, 8, 16...
   }

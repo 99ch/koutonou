@@ -12,22 +12,22 @@ class PrestaShopConfig {
 
   /// URL de base de l'API PrestaShop
   final String baseUrl;
-  
+
   /// Clé API PrestaShop
   final String apiKey;
-  
+
   /// Utiliser HTTPS
   final bool useHttps;
-  
+
   /// Timeout des requêtes en millisecondes
   final int timeoutMs;
-  
+
   /// Format de sortie (xml ou json)
   final String outputFormat;
-  
+
   /// Langue par défaut
   final String defaultLanguage;
-  
+
   /// Debug mode
   final bool debug;
 
@@ -50,7 +50,7 @@ class PrestaShopConfig {
   }) {
     final protocol = _defaultUseHttps ? 'https' : 'http';
     final baseUrl = '$protocol://$host$path';
-    
+
     return PrestaShopConfig(
       baseUrl: baseUrl,
       apiKey: apiKey,
@@ -69,7 +69,7 @@ class PrestaShopConfig {
   }) {
     final protocol = useHttps ? 'https' : 'http';
     final baseUrl = '$protocol://$host$path';
-    
+
     return PrestaShopConfig(
       baseUrl: baseUrl,
       apiKey: apiKey,
@@ -86,10 +86,10 @@ class PrestaShopConfig {
     final apiKey = Platform.environment['PRESTASHOP_API_KEY'];
     final useHttpsStr = Platform.environment['PRESTASHOP_USE_HTTPS'];
     final debugStr = Platform.environment['PRESTASHOP_DEBUG'];
-    
+
     if (apiKey == null || apiKey.isEmpty) {
       throw ArgumentError(
-        'PRESTASHOP_API_KEY environment variable is required'
+        'PRESTASHOP_API_KEY environment variable is required',
       );
     }
 
@@ -109,7 +109,7 @@ class PrestaShopConfig {
   /// URL complète pour une ressource
   String getResourceUrl(String resource, {Map<String, String>? params}) {
     final uri = Uri.parse('$baseUrl/$resource');
-    
+
     final queryParams = <String, String>{
       'output_format': outputFormat,
       'language': defaultLanguage,
@@ -139,20 +139,20 @@ class PrestaShopConfig {
 
   /// Validation de la configuration
   bool get isValid {
-    return baseUrl.isNotEmpty && 
-           apiKey.isNotEmpty && 
-           Uri.tryParse(baseUrl) != null;
+    return baseUrl.isNotEmpty &&
+        apiKey.isNotEmpty &&
+        Uri.tryParse(baseUrl) != null;
   }
 
   @override
   String toString() {
     return 'PrestaShopConfig('
-           'baseUrl: $baseUrl, '
-           'useHttps: $useHttps, '
-           'timeout: ${timeoutMs}ms, '
-           'format: $outputFormat, '
-           'debug: $debug'
-           ')';
+        'baseUrl: $baseUrl, '
+        'useHttps: $useHttps, '
+        'timeout: ${timeoutMs}ms, '
+        'format: $outputFormat, '
+        'debug: $debug'
+        ')';
   }
 
   /// Copie avec modifications
@@ -180,18 +180,21 @@ class PrestaShopConfig {
 /// Instance globale de configuration (singleton)
 class PrestaShopConfigManager {
   static PrestaShopConfig? _instance;
-  
+
   /// Configuration actuelle
   static PrestaShopConfig get instance {
     if (_instance == null) {
       throw StateError(
         'PrestaShop configuration not initialized. '
-        'Call PrestaShopConfigManager.initialize() first.'
+        'Call PrestaShopConfigManager.initialize() first.',
       );
     }
     return _instance!;
   }
-  
+
+  /// Raccourci pour la configuration courante
+  static PrestaShopConfig get current => instance;
+
   /// Initialise la configuration
   static void initialize(PrestaShopConfig config) {
     if (!config.isValid) {
@@ -199,12 +202,18 @@ class PrestaShopConfigManager {
     }
     _instance = config;
   }
-  
+
   /// Vérifie si la configuration est initialisée
   static bool get isInitialized => _instance != null;
-  
+
   /// Reset la configuration (utile pour les tests)
   static void reset() {
     _instance = null;
   }
+}
+
+/// Extension pour raccourcir l'accès à la configuration
+extension PrestaShopConfigExtension on PrestaShopConfig {
+  /// Alias pour la configuration courante
+  static PrestaShopConfig get current => PrestaShopConfigManager.current;
 }

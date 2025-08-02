@@ -23,7 +23,7 @@ class PrestaShopApiInitializer {
 
       // 1. Créer la configuration
       PrestaShopConfig config;
-      
+
       if (host != null && apiKey != null) {
         // Configuration manuelle
         config = PrestaShopConfig.development(
@@ -67,11 +67,16 @@ class PrestaShopApiInitializer {
         _logger.info('✅ Connexion API validée');
       }
 
-      _logger.info('🎉 Initialisation de l\'API PrestaShop terminée avec succès');
+      _logger.info(
+        '🎉 Initialisation de l\'API PrestaShop terminée avec succès',
+      );
       return true;
-
     } catch (e, stackTrace) {
-      _logger.error('❌ Erreur lors de l\'initialisation API: $e', e, stackTrace);
+      _logger.error(
+        '❌ Erreur lors de l\'initialisation API: $e',
+        e,
+        stackTrace,
+      );
       return false;
     }
   }
@@ -80,17 +85,16 @@ class PrestaShopApiInitializer {
   static Future<bool> _validateConnection() async {
     try {
       _logger.debug('🔍 Validation de la connexion API...');
-      
+
       final client = PrestaShopApiClient.instance;
-      
+
       // Test simple : récupérer la liste des langues (endpoint minimal)
       await client.get('languages', queryParams: {'limit': '1'});
-      
+
       return true;
-      
     } on PrestaShopException catch (e) {
       _logger.error('❌ Erreur PrestaShop lors de la validation: ${e.message}');
-      
+
       // Donner des conseils selon le type d'erreur
       switch (e.type) {
         case PrestaShopErrorType.network:
@@ -105,9 +109,8 @@ class PrestaShopApiInitializer {
         default:
           _logger.info('💡 Vérifiez la configuration PrestaShop');
       }
-      
+
       return false;
-      
     } catch (e) {
       _logger.error('❌ Erreur inattendue lors de la validation: $e');
       return false;
@@ -148,12 +151,12 @@ class PrestaShopApiInitializer {
   /// Test complet de l'API avec plusieurs endpoints
   static Future<Map<String, bool>> runApiTests() async {
     final results = <String, bool>{};
-    
+
     _logger.info('🧪 Lancement des tests API complets...');
-    
+
     try {
       final client = PrestaShopApiClient.instance;
-      
+
       // Test 1: Languages
       try {
         await client.get('languages', queryParams: {'limit': '1'});
@@ -163,7 +166,7 @@ class PrestaShopApiInitializer {
         results['languages'] = false;
         _logger.warning('❌ Test languages: ÉCHEC - $e');
       }
-      
+
       // Test 2: Products
       try {
         await client.get('products', queryParams: {'limit': '1'});
@@ -173,7 +176,7 @@ class PrestaShopApiInitializer {
         results['products'] = false;
         _logger.warning('❌ Test products: ÉCHEC - $e');
       }
-      
+
       // Test 3: Customers
       try {
         await client.get('customers', queryParams: {'limit': '1'});
@@ -183,7 +186,7 @@ class PrestaShopApiInitializer {
         results['customers'] = false;
         _logger.warning('❌ Test customers: ÉCHEC - $e');
       }
-      
+
       // Test 4: Orders
       try {
         await client.get('orders', queryParams: {'limit': '1'});
@@ -193,16 +196,15 @@ class PrestaShopApiInitializer {
         results['orders'] = false;
         _logger.warning('❌ Test orders: ÉCHEC - $e');
       }
-      
     } catch (e) {
       _logger.error('❌ Erreur critique lors des tests API: $e');
     }
-    
+
     final successCount = results.values.where((success) => success).length;
     final totalCount = results.length;
-    
+
     _logger.info('📊 Résultats des tests: $successCount/$totalCount réussis');
-    
+
     return results;
   }
 
@@ -212,9 +214,9 @@ class PrestaShopApiInitializer {
       _logger.warning('⚠️ Configuration PrestaShop non initialisée');
       return;
     }
-    
+
     final config = PrestaShopConfigManager.instance;
-    
+
     _logger.info('📋 Configuration PrestaShop actuelle:');
     _logger.info('   • URL de base: ${config.baseUrl}');
     _logger.info('   • HTTPS: ${config.useHttps}');

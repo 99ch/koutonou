@@ -74,6 +74,9 @@ class AppRoutes {
   static const String testLocalization = '/test/localization';
   static const String testRouting = '/test/routing';
 
+  // Routes de démonstration des phases
+  static const String phase4Demo = '/demo/phase4';
+
   // Routes d'erreur
   static const String notFound = '/404';
   static const String error = '/error';
@@ -169,7 +172,8 @@ class AppRoutes {
         route.startsWith('/search/') ||
         route.startsWith('/support/') ||
         route.startsWith('/auth/') ||
-        route.startsWith('/test/');
+        route.startsWith('/test/') ||
+        route.startsWith('/demo/');
   }
 
   /// Obtient le nom de la route à partir du path
@@ -187,6 +191,7 @@ class AppRoutes {
     if (cleanPath.startsWith('/checkout/')) return 'Commande';
     if (cleanPath.startsWith('/support/')) return 'Support';
     if (cleanPath.startsWith('/test/')) return 'Test';
+    if (cleanPath.startsWith('/demo/')) return 'Démonstration';
 
     // Routes simples
     switch (cleanPath) {
@@ -259,6 +264,7 @@ class AppRoutes {
     testCore,
     testLocalization,
     testRouting,
+    phase4Demo,
     notFound,
     error,
   ];

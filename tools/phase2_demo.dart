@@ -12,16 +12,16 @@ class Phase2Demo {
 
     _showStats();
     print('');
-    
+
     _showCapabilities();
     print('');
-    
+
     _showExamples();
     print('');
-    
+
     _showNextSteps();
     print('');
-    
+
     print('🚀 FÉLICITATIONS ! Phase 2 accomplie avec succès ! 🚀');
     print('=' * 60);
   }

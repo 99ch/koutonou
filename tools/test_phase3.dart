@@ -6,7 +6,6 @@ import 'package:koutonou/modules/languages/services/language_service.dart';
 
 /// Tests Phase 3 - Intégration API réelle
 class Phase3ApiTests {
-  
   static Future<void> main() async {
     print('🧪 PHASE 3 - TESTS API PRESTASHOP RÉELLE');
     print('=' * 50);
@@ -40,10 +39,12 @@ class Phase3ApiTests {
     try {
       // Test 1: Initialisation de développement
       print('Test 1: Initialisation développement...');
-      final initSuccess = await PrestaShopApiInitializer.initializeForDevelopment(
-        validateConnection: false, // Pas de validation pour éviter les erreurs de réseau
-      );
-      
+      final initSuccess =
+          await PrestaShopApiInitializer.initializeForDevelopment(
+            validateConnection:
+                false, // Pas de validation pour éviter les erreurs de réseau
+          );
+
       if (initSuccess) {
         print('✅ Initialisation développement: OK');
       } else {
@@ -58,7 +59,6 @@ class Phase3ApiTests {
       } catch (e) {
         print('❌ Configuration invalide: $e');
       }
-
     } catch (e) {
       print('❌ Erreur lors de l\'initialisation: $e');
     }
@@ -85,11 +85,11 @@ class Phase3ApiTests {
       // Test du service Language mis à jour
       print('Test 1: Service Language...');
       final languageService = LanguageService();
-      
+
       try {
         final languages = await languageService.getAll();
         print('✅ Service Language fonctionnel: ${languages.length} langues');
-        
+
         if (languages.isNotEmpty) {
           print('   Premier élément: ${languages.first.name}');
         }
@@ -97,7 +97,6 @@ class Phase3ApiTests {
         print('⚠️  Service Language (mode simulation): $e');
         // En mode simulation, c'est normal que ça échoue avec l'API réelle
       }
-
     } catch (e) {
       print('❌ Erreur dans les tests de services: $e');
     }
@@ -112,13 +111,12 @@ class Phase3ApiTests {
       // Test de tous les endpoints principaux
       print('Lancement des tests multi-endpoints...');
       final results = await PrestaShopApiInitializer.runApiTests();
-      
+
       print('Résultats détaillés:');
       results.forEach((endpoint, success) {
         final status = success ? '✅' : '❌';
         print('  $status $endpoint');
       });
-
     } catch (e) {
       print('❌ Erreur lors des tests API: $e');
     }

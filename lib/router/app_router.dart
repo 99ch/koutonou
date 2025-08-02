@@ -15,6 +15,7 @@ import 'package:koutonou/localization/localization_test_page.dart';
 import 'package:koutonou/test_core_page_simple.dart';
 import 'package:koutonou/mvp_generation_test_page.dart';
 import 'package:koutonou/generator_test_page.dart';
+import 'package:koutonou/phase4_demo_page.dart';
 
 /// Configuration du router principal de l'application
 class AppRouter {
@@ -181,6 +182,13 @@ class AppRouter {
         path: '/test/generator',
         name: 'test-generator',
         builder: (context, state) => const GeneratorTestPage(),
+      ),
+
+      // Routes de démonstration des phases
+      GoRoute(
+        path: AppRoutes.phase4Demo,
+        name: 'phase4-demo',
+        builder: (context, state) => const Phase4DemoPage(),
       ),
     ];
   }
@@ -512,6 +520,10 @@ class RoutingTestPage extends StatelessWidget {
               _NavigationButton(
                 'Générateur Phase 2',
                 () => AppRouter.goNamed('test-generator'),
+              ),
+              _NavigationButton(
+                'Demo Phase 4',
+                () => AppRouter.goNamed('phase4-demo'),
               ),
               _NavigationButton(
                 '404 Page',
