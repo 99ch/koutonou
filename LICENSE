@@ -1,0 +1,44 @@
+MIT License
+
+Copyright (c) 2025 Koutonou - E-commerce Mobile Platform
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## About Koutonou
+
+Koutonou is a modern mobile e-commerce platform built with Flutter and 
+connected to PrestaShop APIs. It demonstrates the complete feasibility 
+of integrating PrestaShop in a modern mobile ecosystem.
+
+### Key Features
+- ✅ PrestaShop API Integration
+- ✅ Modular Architecture
+- ✅ Multi-language Support  
+- ✅ Multi-currency System
+- ✅ Performance Optimized
+- ✅ Production Ready
+
+### Contributors
+- Development Team: [99ch](https://github.com/99ch)
+- Architecture: Flutter + PrestaShop REST API
+- License: MIT (Open Source)
+
+For more information, visit: https://github.com/99ch/koutonou
