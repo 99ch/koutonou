@@ -72,11 +72,13 @@ koutonou/
 ### ✅ Implémentées (MVP Phase 1)
 
 - **🌍 Configuration Globale**
+
   - Sélection langue dynamique (Français/Anglais)
   - Gestion multi-devises (EUR, USD, etc.)
   - Support 241 pays avec détails complets
 
 - **📱 Interface Utilisateur**
+
   - Navigation fluide (GoRouter)
   - Thème adaptatif (Light/Dark)
   - Cache intelligent (TTL 1h)
@@ -97,13 +99,13 @@ koutonou/
 
 ## 📊 Performance
 
-| Métrique | Valeur | Status |
-|----------|--------|--------|
-| Cache Hit Rate | 95%+ | ✅ Excellent |
-| API Response | <1s | ✅ Rapide |
-| Langues supportées | 2+ | ✅ Extensible |
-| Pays supportés | 241 | ✅ Global |
-| Build Time | ~30s | ✅ Optimisé |
+| Métrique           | Valeur | Status        |
+| ------------------ | ------ | ------------- |
+| Cache Hit Rate     | 95%+   | ✅ Excellent  |
+| API Response       | <1s    | ✅ Rapide     |
+| Langues supportées | 2+     | ✅ Extensible |
+| Pays supportés     | 241    | ✅ Global     |
+| Build Time         | ~30s   | ✅ Optimisé   |
 
 ## 🧪 Tests & Validation
 

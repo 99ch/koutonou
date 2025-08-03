@@ -12,13 +12,6 @@ import 'core/providers/simple_providers.dart';
 // Localization imports
 import 'localization/app_localizations.dart';
 import 'localization/localization_service.dart';
-import 'localization/localization_test_page.dart';
-
-// Test pages
-import 'test_core_page_simple.dart';
-import 'shared_widgets_test_page.dart';
-import 'mvp_generation_test_page.dart';
-import 'mvp_frontend_demo.dart';
 
 /// Helper pour les logs de debug (seulement en mode debug)
 void _debugLog(String message) {
@@ -102,8 +95,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
       // Petit délai pour s'assurer que le contexte est prêt
       await Future.delayed(const Duration(milliseconds: 100));
 
-      _debugLog('Création de l\'AuthProvider simple...');
-      // Créer une version simplifiée de l'AuthProvider pour les tests
+      _debugLog('Création de l\'AuthProvider...');
       _authProvider = SimpleAuthProvider();
       _debugLog('AuthProvider créé');
 
@@ -206,7 +198,7 @@ class _KoutonouAppState extends State<KoutonouApp> {
         ChangeNotifierProvider(create: (_) => SimpleCacheProvider()),
       ],
       child: MaterialApp.router(
-        title: 'Koutonou - Architecture Modulaire',
+        title: 'Koutonou - E-commerce Platform',
         debugShowCheckedModeBanner: false,
 
         // Configuration de localisation
@@ -281,43 +273,6 @@ class _KoutonouAppState extends State<KoutonouApp> {
           },
         ),
 
-        // Routes de test
-        GoRoute(
-          path: '/test/core',
-          name: 'test-core',
-          builder: (context, state) {
-            _debugLog('Construction de TestCorePage');
-            return const TestCorePage();
-          },
-        ),
-
-        GoRoute(
-          path: '/test/localization',
-          name: 'test-localization',
-          builder: (context, state) {
-            _debugLog('Construction de LocalizationTestPage');
-            return const LocalizationTestPage();
-          },
-        ),
-
-        GoRoute(
-          path: '/test/routing',
-          name: 'test-routing',
-          builder: (context, state) {
-            _debugLog('Construction de RoutingTestPage');
-            return const RoutingTestPage();
-          },
-        ),
-
-        GoRoute(
-          path: '/test/mvp-generation',
-          name: 'test-mvp-generation',
-          builder: (context, state) {
-            _debugLog('Construction de MvpGenerationTestPage');
-            return const MvpGenerationTestPage();
-          },
-        ),
-
         // Routes principales
         GoRoute(
           path: '/products',
@@ -346,13 +301,12 @@ class _KoutonouAppState extends State<KoutonouApp> {
           },
         ),
 
-        // Route de test pour les widgets partagés
         GoRoute(
-          path: '/test/widgets',
-          name: 'test-widgets',
+          path: '/orders',
+          name: 'orders',
           builder: (context, state) {
-            _debugLog('Construction de SharedWidgetsTestPage');
-            return const SharedWidgetsTestPage();
+            _debugLog('Construction de OrdersPage');
+            return const OrdersPage();
           },
         ),
       ];
@@ -364,66 +318,101 @@ class _KoutonouAppState extends State<KoutonouApp> {
   }
 }
 
-// Pages temporaires pour les tests
+// Pages principales de l'application
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const LocalizationTestPage(),
-    const TestCorePage(),
-    const RoutingTestPage(),
-    const MvpFrontendDemo(),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _debugLog('HomePage initialisée');
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _debugLog('HomePage build() appelé - index: $_selectedIndex');
-    try {
-      return Scaffold(
-        body: _pages[_selectedIndex],
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (index) {
-            _debugLog('Navigation vers onglet: $index');
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.language),
-              label: 'Localisation',
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Koutonou'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            onPressed: () => context.go('/profile'),
+            icon: const Icon(Icons.person),
+            tooltip: 'Profil',
+          ),
+          IconButton(
+            onPressed: () => context.go('/cart'),
+            icon: const Icon(Icons.shopping_cart),
+            tooltip: 'Panier',
+          ),
+        ],
+      ),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.store,
+              size: 120,
+              color: Colors.blue,
             ),
-            NavigationDestination(icon: Icon(Icons.build), label: 'Core Test'),
-            NavigationDestination(
-              icon: Icon(Icons.route),
-              label: 'Router Test',
+            SizedBox(height: 24),
+            Text(
+              'Bienvenue sur Koutonou',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            NavigationDestination(
-              icon: Icon(Icons.shopping_cart),
-              label: 'MVP Demo',
+            SizedBox(height: 16),
+            Text(
+              'Votre marketplace e-commerce moderne',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
             ),
+            SizedBox(height: 32),
+            // TODO: Ajouter des widgets pour navigation vers produits, catégories, etc.
           ],
         ),
-      );
-    } catch (e) {
-      _debugLog('Erreur dans HomePage build: $e');
-      return Scaffold(body: Center(child: Text('Erreur: $e')));
-    }
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Accueil',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.store),
+            label: 'Produits',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.category),
+            label: 'Catégories',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Compte',
+          ),
+        ],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              context.go('/home');
+              break;
+            case 1:
+              context.go('/products');
+              break;
+            case 2:
+              // TODO: Implémenter les catégories
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Catégories - À venir')),
+              );
+              break;
+            case 3:
+              context.go('/profile');
+              break;
+          }
+        },
+      ),
+    );
   }
 }
 
@@ -438,20 +427,27 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Page de Connexion'),
-            const SizedBox(height: 20),
+            const Icon(Icons.login, size: 80, color: Colors.blue),
+            const SizedBox(height: 24),
+            const Text(
+              'Connexion',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+            // TODO: Ajouter formulaire de connexion
             ElevatedButton(
               onPressed: () async {
                 await Provider.of<SimpleAuthProvider>(
                   context,
                   listen: false,
-                ).login('test@example.com', 'password');
+                ).login('user@koutonou.com', 'password');
                 if (context.mounted) {
                   context.go('/home');
                 }
               },
-              child: const Text('Se connecter (Demo)'),
+              child: const Text('Connexion Demo'),
             ),
+            const SizedBox(height: 16),
             TextButton(
               onPressed: () => context.go('/auth/register'),
               child: const Text('Créer un compte'),
@@ -474,8 +470,16 @@ class RegisterPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Page d\'Inscription'),
-            const SizedBox(height: 20),
+            const Icon(Icons.person_add, size: 80, color: Colors.green),
+            const SizedBox(height: 24),
+            const Text(
+              'Inscription',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+            // TODO: Ajouter formulaire d'inscription
+            const Text('Formulaire d\'inscription à implémenter'),
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () => context.go('/auth/login'),
               child: const Text('Retour à la connexion'),
@@ -487,110 +491,6 @@ class RegisterPage extends StatelessWidget {
   }
 }
 
-class RoutingTestPage extends StatelessWidget {
-  const RoutingTestPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Test Router')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Navigation Tests',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-
-            _buildNavigationSection('Authentification', [
-              _NavigationButton('Connexion', () => context.go('/auth/login')),
-              _NavigationButton(
-                'Inscription',
-                () => context.go('/auth/register'),
-              ),
-            ]),
-
-            _buildNavigationSection('Pages principales', [
-              _NavigationButton('Produits', () => context.go('/products')),
-              _NavigationButton('Panier', () => context.go('/cart')),
-              _NavigationButton('Profil', () => context.go('/profile')),
-            ]),
-
-            _buildNavigationSection('Tests', [
-              _NavigationButton('Core Test', () => context.go('/test/core')),
-              _NavigationButton(
-                'Localisation Test',
-                () => context.go('/test/localization'),
-              ),
-              _NavigationButton(
-                'Widgets Partagés',
-                () => context.go('/test/widgets'),
-              ),
-              _NavigationButton(
-                'Génération MVP',
-                () => context.go('/test/mvp-generation'),
-              ),
-            ]),
-
-            const SizedBox(height: 20),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Informations de route',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Route actuelle: ${GoRouterState.of(context).fullPath}',
-                    ),
-                    Text(
-                      'Authentifié: ${Provider.of<SimpleAuthProvider>(context).isLoggedIn}',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavigationSection(String title, List<Widget> buttons) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Wrap(spacing: 8, runSpacing: 8, children: buttons),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-}
-
-class _NavigationButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-
-  const _NavigationButton(this.label, this.onPressed);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(onPressed: onPressed, child: Text(label));
-  }
-}
-
 class ProductsPage extends StatelessWidget {
   const ProductsPage({super.key});
 
@@ -598,18 +498,19 @@ class ProductsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Produits')),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.shopping_bag, size: 64),
-            const SizedBox(height: 16),
-            const Text('Page Produits'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => context.go('/home'),
-              child: const Text('Retour à l\'accueil'),
+            Icon(Icons.shopping_bag, size: 80, color: Colors.orange),
+            SizedBox(height: 24),
+            Text(
+              'Catalogue Produits',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 16),
+            Text('Module produits à implémenter'),
+            // TODO: Implémenter le catalogue produits
           ],
         ),
       ),
@@ -624,18 +525,19 @@ class CartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Panier')),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.shopping_cart, size: 64),
-            const SizedBox(height: 16),
-            const Text('Page Panier (Protégée)'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => context.go('/home'),
-              child: const Text('Retour à l\'accueil'),
+            Icon(Icons.shopping_cart, size: 80, color: Colors.purple),
+            SizedBox(height: 24),
+            Text(
+              'Mon Panier',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 16),
+            Text('Panier vide - Module à implémenter'),
+            // TODO: Implémenter la gestion du panier
           ],
         ),
       ),
@@ -654,27 +556,64 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.person, size: 64),
-            const SizedBox(height: 16),
-            const Text('Page Profil (Protégée)'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await Provider.of<SimpleAuthProvider>(
-                  context,
-                  listen: false,
-                ).logout();
-                if (context.mounted) {
-                  context.go('/auth/login');
-                }
+            const Icon(Icons.person, size: 80, color: Colors.blue),
+            const SizedBox(height: 24),
+            const Text(
+              'Mon Profil',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 32),
+            // TODO: Afficher informations utilisateur
+            Consumer<SimpleAuthProvider>(
+              builder: (context, auth, child) {
+                return Column(
+                  children: [
+                    Text('Connecté: ${auth.isLoggedIn ? "Oui" : "Non"}'),
+                    if (auth.isLoggedIn) ...[
+                      const SizedBox(height: 16),
+                      Text('Email: ${auth.userEmail ?? "Non défini"}'),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await auth.logout();
+                          if (context.mounted) {
+                            context.go('/auth/login');
+                          }
+                        },
+                        child: const Text('Se déconnecter'),
+                      ),
+                    ],
+                  ],
+                );
               },
-              child: const Text('Se déconnecter'),
             ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: () => context.go('/home'),
-              child: const Text('Retour à l\'accueil'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OrdersPage extends StatelessWidget {
+  const OrdersPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mes Commandes')),
+      body: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.receipt_long, size: 80, color: Colors.green),
+            SizedBox(height: 24),
+            Text(
+              'Mes Commandes',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            SizedBox(height: 16),
+            Text('Aucune commande - Module à implémenter'),
+            // TODO: Implémenter l'historique des commandes
           ],
         ),
       ),
@@ -693,10 +632,15 @@ class ErrorPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error, size: 64, color: Colors.red),
+            const Icon(Icons.error, size: 80, color: Colors.red),
+            const SizedBox(height: 24),
+            const Text(
+              'Page non trouvée',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
-            const Text('Une erreur s\'est produite'),
-            const SizedBox(height: 20),
+            const Text('La page demandée n\'existe pas.'),
+            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () => context.go('/home'),
               child: const Text('Retour à l\'accueil'),
@@ -708,7 +652,7 @@ class ErrorPage extends StatelessWidget {
   }
 }
 
-/// Version simplifiée de l'AuthProvider pour les tests du router
+/// AuthProvider simple pour l'authentification
 class SimpleAuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
   bool _isLoading = false;
@@ -725,29 +669,27 @@ class SimpleAuthProvider with ChangeNotifier {
   String? get userId => _userData?['id']?.toString();
   String? get userName => _userData?['name'] ?? _userData?['email'];
 
-  /// Initialise le provider (ne fait rien pour la version simple)
+  /// Initialise le provider
   Future<void> initialize() async {
     _debugLog('SimpleAuthProvider initialisé');
-    // Pas d'initialisation complexe pour les tests
   }
 
-  /// Connexion simplifiée pour les tests
+  /// Connexion
   Future<void> login(String email, String password) async {
-    _debugLog('Connexion simplifiée: $email');
+    _debugLog('Connexion: $email');
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
       // Simuler un délai de connexion
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 800));
 
-      // Simuler une connexion réussie
       _userData = {
         'id': 1,
         'email': email,
-        'name': 'Utilisateur Test',
-        'role': 'user',
+        'name': 'Utilisateur Koutonou',
+        'role': 'customer',
       };
       _isLoggedIn = true;
       _debugLog('Connexion réussie');
@@ -760,7 +702,7 @@ class SimpleAuthProvider with ChangeNotifier {
     }
   }
 
-  /// Déconnexion simplifiée
+  /// Déconnexion
   Future<void> logout() async {
     _debugLog('Déconnexion');
     _isLoggedIn = false;
@@ -769,9 +711,9 @@ class SimpleAuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Inscription simplifiée
+  /// Inscription
   Future<void> signup(Map<String, dynamic> customerData) async {
-    _debugLog('Inscription simplifiée');
+    _debugLog('Inscription');
     await login(customerData['email'], 'password');
   }
 }

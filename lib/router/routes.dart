@@ -69,11 +69,6 @@ class AppRoutes {
   static const String privacyPolicy = '/privacy-policy';
   static const String termsOfService = '/terms-of-service';
 
-  // Routes de test (développement uniquement)
-  static const String testCore = '/test/core';
-  static const String testLocalization = '/test/localization';
-  static const String testRouting = '/test/routing';
-
   // Routes d'erreur
   static const String notFound = '/404';
   static const String error = '/error';
@@ -168,8 +163,7 @@ class AppRoutes {
         route.startsWith('/categories/') ||
         route.startsWith('/search/') ||
         route.startsWith('/support/') ||
-        route.startsWith('/auth/') ||
-        route.startsWith('/test/');
+        route.startsWith('/auth/');
   }
 
   /// Obtient le nom de la route à partir du path
@@ -186,7 +180,6 @@ class AppRoutes {
     if (cleanPath.startsWith('/orders/')) return 'Commandes';
     if (cleanPath.startsWith('/checkout/')) return 'Commande';
     if (cleanPath.startsWith('/support/')) return 'Support';
-    if (cleanPath.startsWith('/test/')) return 'Test';
 
     // Routes simples
     switch (cleanPath) {
@@ -256,9 +249,6 @@ class AppRoutes {
     about,
     privacyPolicy,
     termsOfService,
-    testCore,
-    testLocalization,
-    testRouting,
     notFound,
     error,
   ];

@@ -129,15 +129,15 @@ class ProductModel {
   @JsonKey(name: 'id')
   @IntStringConverter()
   final int? id;
-  
+
   @JsonKey(name: 'name')
   final String? name;
-  
+
   const ProductModel({this.id, this.name});
-  
+
   factory ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$ProductModelToJson(this);
 }
 
@@ -146,9 +146,9 @@ class ProductService {
   static final ProductService _instance = ProductService._internal();
   factory ProductService() => _instance;
   ProductService._internal();
-  
+
   final Map<String, CacheEntry<List<ProductModel>>> _cache = {};
-  
+
   Future<List<ProductModel>> getAll({Map<String, String>? filters}) async {
     // Cache check
     // API call
@@ -200,38 +200,46 @@ git commit -m "test(router): add authentication flow tests"
 ### 7. 🚀 Pull Request
 
 1. **Push la branche**
+
    ```bash
    git push origin [branch-name]
    ```
 
 2. **Créer PR** sur GitHub avec :
+
    - Titre descriptif
    - Description détaillée
    - Checklist complétée
    - Screenshots si UI
 
 3. **Template PR** :
+
    ```markdown
    ## 🎯 Description
+
    Brief description of changes
-   
+
    ## ✅ Type de changement
+
    - [ ] Bug fix
    - [ ] New feature
    - [ ] Breaking change
    - [ ] Documentation update
-   
+
    ## 🧪 Tests
+
    - [ ] Unit tests pass
    - [ ] Integration tests pass
    - [ ] Manual testing completed
-   
+
    ## 📚 Documentation
+
    - [ ] Code commented
    - [ ] Documentation updated
    - [ ] Architecture guide updated if needed
-   
+
    ## 📊 Performance
+
    - [ ] No performance regression
    - [ ] Cache strategy appropriate
    - [ ] Memory usage acceptable
@@ -245,7 +253,7 @@ git commit -m "test(router): add authentication flow tests"
 
 - **products/** : Catalogue, détails, variations
 - **customers/** : Auth, profils, adresses
-- **carts/** : Panier, calculs, persistance  
+- **carts/** : Panier, calculs, persistance
 - **orders/** : Commandes, payment, status
 
 ### 🔧 Améliorations Architecture
@@ -311,6 +319,7 @@ git commit -m "test(router): add authentication flow tests"
 ### 🌟 Contributors
 
 Les contributeurs sont reconnus dans :
+
 - README.md contributors section
 - Release notes
 - GitHub contributors graph

@@ -24,19 +24,21 @@ SOFTWARE.
 
 ## About Koutonou
 
-Koutonou is a modern mobile e-commerce platform built with Flutter and 
-connected to PrestaShop APIs. It demonstrates the complete feasibility 
+Koutonou is a modern mobile e-commerce platform built with Flutter and
+connected to PrestaShop APIs. It demonstrates the complete feasibility
 of integrating PrestaShop in a modern mobile ecosystem.
 
 ### Key Features
+
 - ✅ PrestaShop API Integration
 - ✅ Modular Architecture
-- ✅ Multi-language Support  
+- ✅ Multi-language Support
 - ✅ Multi-currency System
 - ✅ Performance Optimized
 - ✅ Production Ready
 
 ### Contributors
+
 - Development Team: [99ch](https://github.com/99ch)
 - Architecture: Flutter + PrestaShop REST API
 - License: MIT (Open Source)

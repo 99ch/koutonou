@@ -11,11 +11,8 @@ import 'package:koutonou/router/routes.dart';
 import 'package:koutonou/router/route_guard.dart';
 
 // Pages de l'application
-import 'package:koutonou/localization/localization_test_page.dart';
-import 'package:koutonou/test_core_page_simple.dart';
-import 'package:koutonou/mvp_generation_test_page.dart';
-import 'package:koutonou/generator_test_page.dart';
-import 'package:koutonou/mvp_frontend_demo.dart';
+// Note: Les imports des pages spécifiques seront ajoutés au fur et à mesure
+// du développement des modules.
 
 /// Configuration du router principal de l'application
 class AppRouter {
@@ -102,10 +99,7 @@ class AppRouter {
       // Routes d'authentification
       ..._buildAuthRoutes(),
 
-      // Routes de test (développement)
-      ..._buildTestRoutes(),
-
-      // Routes principales (à implémenter plus tard)
+      // Routes principales
       ..._buildMainRoutes(),
 
       // Routes d'erreur
@@ -151,50 +145,7 @@ class AppRouter {
     ];
   }
 
-  /// Routes de test pour le développement
-  static List<RouteBase> _buildTestRoutes() {
-    return [
-      GoRoute(
-        path: AppRoutes.testCore,
-        name: 'test-core',
-        builder: (context, state) => const TestCorePage(),
-      ),
-
-      GoRoute(
-        path: AppRoutes.testLocalization,
-        name: 'test-localization',
-        builder: (context, state) => const LocalizationTestPage(),
-      ),
-
-      GoRoute(
-        path: AppRoutes.testRouting,
-        name: 'test-routing',
-        builder: (context, state) => const RoutingTestPage(),
-      ),
-
-      // Route test MVP generation
-      GoRoute(
-        path: '/test/mvp-generation',
-        name: 'test-mvp-generation',
-        builder: (context, state) => const MvpGenerationTestPage(),
-      ),
-
-      // Route MVP Frontend Demo - Proof of Concept
-      GoRoute(
-        path: '/mvp/frontend-demo',
-        name: 'mvp-frontend-demo',
-        builder: (context, state) => const MvpFrontendDemo(),
-      ),
-
-      GoRoute(
-        path: '/test/generator',
-        name: 'test-generator',
-        builder: (context, state) => const GeneratorTestPage(),
-      ),
-    ];
-  }
-
-  /// Routes principales de l'application (stubs pour l'instant)
+  /// Routes principales de l'application
   static List<RouteBase> _buildMainRoutes() {
     return [
       // Routes des produits
@@ -351,47 +302,160 @@ class AppRouter {
 
 // Pages temporaires pour les tests
 
-/// Page d'accueil temporaire
-class HomePage extends StatefulWidget {
+/// Page d'accueil de l'application
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const LocalizationTestPage(),
-    const TestCorePage(),
-    const RoutingTestPage(),
-    const GeneratorTestPage(),
-  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.language),
-            label: 'Localisation',
+      appBar: AppBar(
+        title: const Text('Koutonou'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () => AppRouter.goNamed('profile'),
           ),
-          NavigationDestination(icon: Icon(Icons.build), label: 'Core Test'),
-          NavigationDestination(icon: Icon(Icons.route), label: 'Router Test'),
-          NavigationDestination(
-            icon: Icon(Icons.auto_awesome),
-            label: 'Générateur',
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () => AppRouter.goNamed('cart'),
           ),
         ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Section bienvenue
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Bienvenue sur Koutonou',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Votre plateforme e-commerce mobile connectée à PrestaShop',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Navigation rapide vers les principales sections
+            Text(
+              'Navigation rapide',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 12),
+            
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              children: [
+                _buildQuickNavCard(
+                  context,
+                  'Produits',
+                  Icons.inventory,
+                  () => AppRouter.goNamed('products'),
+                ),
+                _buildQuickNavCard(
+                  context,
+                  'Catégories',
+                  Icons.category,
+                  () => AppRouter.goNamed('categories'),
+                ),
+                _buildQuickNavCard(
+                  context,
+                  'Commandes',
+                  Icons.receipt_long,
+                  () => AppRouter.goNamed('orders'),
+                ),
+                _buildQuickNavCard(
+                  context,
+                  'Paramètres',
+                  Icons.settings,
+                  () => AppRouter.goNamed('settings'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Accueil',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory),
+            label: 'Produits',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Panier',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              AppRouter.goHome();
+              break;
+            case 1:
+              AppRouter.goNamed('products');
+              break;
+            case 2:
+              AppRouter.goNamed('cart');
+              break;
+            case 3:
+              AppRouter.goNamed('profile');
+              break;
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildQuickNavCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 32, color: Theme.of(context).primaryColor),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -459,130 +523,6 @@ class AuthPage extends StatelessWidget {
 }
 
 enum AuthMode { login, register, forgotPassword }
-
-/// Page de test du routing
-class RoutingTestPage extends StatelessWidget {
-  const RoutingTestPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Test Router')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Navigation Tests',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-
-            _buildNavigationSection('Authentification', [
-              _NavigationButton('Connexion', () => AppRouter.goNamed('login')),
-              _NavigationButton(
-                'Inscription',
-                () => AppRouter.goNamed('register'),
-              ),
-              _NavigationButton(
-                'Mot de passe oublié',
-                () => AppRouter.goNamed('forgot-password'),
-              ),
-            ]),
-
-            _buildNavigationSection('Pages principales', [
-              _NavigationButton(
-                'Produits',
-                () => AppRouter.goNamed('products'),
-              ),
-              _NavigationButton(
-                'Catégories',
-                () => AppRouter.goNamed('categories'),
-              ),
-              _NavigationButton('Panier', () => AppRouter.goNamed('cart')),
-              _NavigationButton('Commandes', () => AppRouter.goNamed('orders')),
-              _NavigationButton('Profil', () => AppRouter.goNamed('profile')),
-              _NavigationButton(
-                'Paramètres',
-                () => AppRouter.goNamed('settings'),
-              ),
-            ]),
-
-            _buildNavigationSection('Tests', [
-              _NavigationButton(
-                'Core Test',
-                () => AppRouter.goNamed('test-core'),
-              ),
-              _NavigationButton(
-                'Localisation Test',
-                () => AppRouter.goNamed('test-localization'),
-              ),
-              _NavigationButton(
-                'Générateur Phase 2',
-                () => AppRouter.goNamed('test-generator'),
-              ),
-              _NavigationButton(
-                '404 Page',
-                () => AppRouter.go('/page-inexistante'),
-              ),
-            ]),
-
-            const SizedBox(height: 20),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Informations de route',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Route actuelle: ${GoRouterState.of(context).fullPath}',
-                    ),
-                    Text(
-                      'Authentifié: ${Provider.of<AuthProvider>(context).isLoggedIn}',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavigationSection(String title, List<Widget> buttons) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Wrap(spacing: 8, runSpacing: 8, children: buttons),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-}
-
-class _NavigationButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-
-  const _NavigationButton(this.label, this.onPressed);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(onPressed: onPressed, child: Text(label));
-  }
-}
 
 /// Page placeholder générique
 class PlaceholderPage extends StatelessWidget {

@@ -8,6 +8,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Non publié]
 
 ### 🚧 En développement (Phase 2)
+
 - Module products : Catalogue et détails produits
 - Module customers : Authentification et profils
 - Module carts : Gestion panier dynamique
@@ -24,6 +25,7 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 ### ✅ Ajouté
 
 #### 🏗️ **Architecture Core**
+
 - **Flutter 3.24.1** : Framework moderne et stable
 - **GoRouter 14.3.0** : Navigation type-safe avec protection routes
 - **Provider pattern** : State management robuste
@@ -31,12 +33,14 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 - **Material Design 3.0** : Theming moderne avec dark mode
 
 #### 🌐 **API Integration PrestaShop**
+
 - **HTTP Client** : Dio avec configuration optimisée
 - **Proxy PHP** : CORS et authentification automatique
 - **Error handling** : Gestion robuste de tous les cas d'erreur
 - **Logging system** : Logs structurés pour debugging
 
 #### 📦 **Module configs/ (VALIDÉ)**
+
 - **LanguageService** : API Languages PrestaShop (2+ langues)
 - **CurrencyService** : API Currencies PrestaShop (devises avec taux)
 - **CountryService** : API Countries PrestaShop (241 pays)
@@ -44,6 +48,7 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 - **Models robustes** : JSON serialization avec convertisseurs string/int
 
 #### 🎨 **Interface Utilisateur**
+
 - **Navigation tabs** : 4 onglets fonctionnels
 - **MVP Frontend Demo** : Proof of concept complet
 - **E-commerce Simulation** : Panier avec calculs multi-devises
@@ -51,12 +56,14 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 - **Responsive design** : Interface adaptée web/mobile
 
 #### 🌍 **Internationalisation**
+
 - **Français/Anglais** : Support multilingue complet
 - **LocalizationService** : Gestion persistante de la langue
 - **Integration PrestaShop** : Sync avec langues disponibles
 - **Formats localisés** : Dates, nombres, devises
 
 #### 🧪 **Testing & Validation**
+
 - **Test pages intégrées** : Validation manuelle interactive
 - **Router tests** : Navigation et protection routes
 - **Core tests** : Architecture et providers
@@ -65,13 +72,13 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 
 ### 📊 **Performance Validée**
 
-| Métrique | Valeur Atteinte | Target | Status |
-|----------|-----------------|--------|--------|
-| Cold Start | 2.1s | <3s | ✅ Excellent |
-| Cache Hit Rate | 96%+ | >90% | ✅ Optimal |
-| API Response | 847ms avg | <1s | ✅ Rapide |
-| Memory Usage | ~45MB | <100MB | ✅ Efficace |
-| Bundle Size | ~12MB | <20MB | ✅ Compact |
+| Métrique       | Valeur Atteinte | Target | Status       |
+| -------------- | --------------- | ------ | ------------ |
+| Cold Start     | 2.1s            | <3s    | ✅ Excellent |
+| Cache Hit Rate | 96%+            | >90%   | ✅ Optimal   |
+| API Response   | 847ms avg       | <1s    | ✅ Rapide    |
+| Memory Usage   | ~45MB           | <100MB | ✅ Efficace  |
+| Bundle Size    | ~12MB           | <20MB  | ✅ Compact   |
 
 ### 🎯 **Validation Techniques**
 
@@ -105,24 +112,28 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 ### ✅ Ajouté
 
 #### 🔗 **API PrestaShop Connection**
+
 - Configuration API endpoints
 - Proxy PHP pour CORS handling
 - Authentication automatique
 - Error forwarding et JSON formatting
 
 #### 📊 **Cache System**
+
 - Memory cache avec TTL
 - Stratégies par type de données
 - Cache hit rate monitoring
 - Performance optimizations
 
 #### 🧪 **MVP Demo Page**
+
 - Interface configuration dynamique
 - Simulation e-commerce basique
 - Métriques performance temps réel
 - Validation faisabilité
 
 ### 🐛 **Corrigé**
+
 - Type mismatches PrestaShop (string/int)
 - Cache TTL et expiration
 - JSON parsing robuste
@@ -135,24 +146,28 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 ### ✅ Ajouté
 
 #### 🏗️ **Modular Architecture**
+
 - Structure 15 modules définie
 - Module configs/ avec models
 - Service pattern avec singleton
 - Provider pattern pour state management
 
 #### 🛣️ **Navigation System**
+
 - GoRouter configuration
 - Route protection et guards
 - Authentication flow
 - Deep linking support
 
 #### 🎨 **UI Foundation**
+
 - Material Design 3.0 theming
 - Bottom navigation
 - Test pages structure
 - Responsive layouts
 
 ### 🔧 **Amélioré**
+
 - Provider setup optimisé
 - Error handling centralisé
 - Debug logging system
@@ -165,18 +180,21 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 ### ✅ Ajouté
 
 #### 🚀 **Project Setup**
+
 - Flutter 3.24.1 project initialization
 - Dependency management (pubspec.yaml)
 - Basic folder structure
 - Development environment setup
 
 #### 📱 **Core Features**
+
 - Main app structure
 - Basic theming system
 - Localization foundation
 - Initial navigation
 
 #### 🔧 **Development Tools**
+
 - Linting configuration
 - Build runner setup
 - Environment variables
@@ -214,18 +232,21 @@ Cette version marque la **validation complète** de la faisabilité d'intégrati
 ## Roadmap
 
 ### 🎯 **Phase 2 - Core E-commerce (Q3 2025)**
+
 - Products catalog et détails
 - Customer authentication
 - Shopping cart management
 - Order processing workflow
 
 ### 📈 **Phase 3 - Advanced Features (Q4 2025)**
+
 - Search et filtering system
 - Categories navigation
 - Stock management
 - Shipping options
 
 ### 🚀 **Phase 4 - Enterprise (Q1 2026)**
+
 - Multi-vendor support
 - CMS integration
 - Analytics et reporting

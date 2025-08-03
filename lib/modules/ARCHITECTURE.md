@@ -34,15 +34,15 @@ modules/[module_name]/
 class LanguageModel {
   @JsonKey(name: 'id')
   final int? id;
-  
+
   @JsonKey(name: 'name')
   final String? name;
-  
+
   @JsonKey(name: 'iso_code')
   final String? isoCode;
-  
+
   // + 12 autres champs PrestaShop validés
-  
+
   factory LanguageModel.fromJson(Map<String, dynamic> json) =>
       _$LanguageModelFromJson(json);
 }
@@ -51,10 +51,10 @@ class LanguageModel {
 class LanguageService {
   static final LanguageService _instance = LanguageService._internal();
   factory LanguageService() => _instance;
-  
+
   // ✅ Cache intelligent avec TTL
   final Map<String, CacheEntry<List<LanguageModel>>> _cache = {};
-  
+
   Future<List<LanguageModel>> getAll() async {
     // 1. ✅ Check cache first
     // 2. ✅ API call avec display=full si nécessaire
@@ -71,44 +71,45 @@ class LanguageService {
 
 ### ✅ Phase 1 - Configuration System (TERMINÉE)
 
-| Module | Status | API Resources | Models | Services | UI |
-|--------|--------|---------------|--------|----------|-----|
+| Module      | Status      | API Resources                    | Models   | Services   | UI       |
+| ----------- | ----------- | -------------------------------- | -------- | ---------- | -------- |
 | **configs** | ✅ Complete | Languages, Currencies, Countries | 3 models | 3 services | MVP Demo |
 
 **Validation complète :**
-- 🔗 API Integration : 100% 
+
+- 🔗 API Integration : 100%
 - 📊 Performance : <1s response, 96% cache hit
 - 🎨 UI/UX : Demo fonctionnel + simulation
 - 🧪 Testing : Validé en production
 
 ### 🚧 Phase 2 - Core E-commerce (EN COURS)
 
-| Module | Priority | Status | API Resources | Complexity |
-|--------|----------|--------|---------------|------------|
-| **products** | 🔥 Critical | 🚧 Next | Products, Images, Attributes | High |
-| **customers** | 🔥 Critical | 🚧 Next | Customers, Addresses | Medium |
-| **carts** | 🔥 Critical | 🚧 Next | Carts, Cart Rules | Medium |
-| **orders** | 🔥 Critical | 🚧 Next | Orders, Order States | High |
+| Module        | Priority    | Status  | API Resources                | Complexity |
+| ------------- | ----------- | ------- | ---------------------------- | ---------- |
+| **products**  | 🔥 Critical | 🚧 Next | Products, Images, Attributes | High       |
+| **customers** | 🔥 Critical | 🚧 Next | Customers, Addresses         | Medium     |
+| **carts**     | 🔥 Critical | 🚧 Next | Carts, Cart Rules            | Medium     |
+| **orders**    | 🔥 Critical | 🚧 Next | Orders, Order States         | High       |
 
 ### 📋 Phase 3 - Advanced Features (PLANIFIÉE)
 
-| Module | Priority | Status | API Resources | Dependencies |
-|--------|----------|--------|---------------|--------------|
-| **categories** | 🔶 High | 📋 Planned | Categories, Nested Structure | products |
-| **search** | 🔶 High | 📋 Planned | Search API, Filters | products, categories |
-| **stocks** | 🔶 Medium | 📋 Planned | Stock Available, Movements | products |
-| **shipping** | 🔶 Medium | 📋 Planned | Carriers, Delivery | orders |
-| **taxes** | 🔶 Medium | 📋 Planned | Tax Rules, Tax Groups | products, orders |
+| Module         | Priority  | Status     | API Resources                | Dependencies         |
+| -------------- | --------- | ---------- | ---------------------------- | -------------------- |
+| **categories** | 🔶 High   | 📋 Planned | Categories, Nested Structure | products             |
+| **search**     | 🔶 High   | 📋 Planned | Search API, Filters          | products, categories |
+| **stocks**     | 🔶 Medium | 📋 Planned | Stock Available, Movements   | products             |
+| **shipping**   | 🔶 Medium | 📋 Planned | Carriers, Delivery           | orders               |
+| **taxes**      | 🔶 Medium | 📋 Planned | Tax Rules, Tax Groups        | products, orders     |
 
 ### 🔮 Phase 4 - Enterprise Features (FUTURE)
 
-| Module | Priority | Status | API Resources | Use Case |
-|--------|----------|--------|---------------|----------|
-| **stores** | 🔸 Low | 🔮 Future | Stores, Shop Groups | Multi-vendor |
-| **cms** | 🔸 Low | 🔮 Future | CMS Categories, Pages | Content management |
-| **employees** | 🔸 Low | 🔮 Future | Employees, Permissions | Back-office |
-| **manufacturers** | 🔸 Low | 🔮 Future | Manufacturers, Suppliers | Product sourcing |
-| **customizations** | 🔸 Low | 🔮 Future | Customizations, Features | Product variants |
+| Module             | Priority | Status    | API Resources            | Use Case           |
+| ------------------ | -------- | --------- | ------------------------ | ------------------ |
+| **stores**         | 🔸 Low   | 🔮 Future | Stores, Shop Groups      | Multi-vendor       |
+| **cms**            | 🔸 Low   | 🔮 Future | CMS Categories, Pages    | Content management |
+| **employees**      | 🔸 Low   | 🔮 Future | Employees, Permissions   | Back-office        |
+| **manufacturers**  | 🔸 Low   | 🔮 Future | Manufacturers, Suppliers | Product sourcing   |
+| **customizations** | 🔸 Low   | 🔮 Future | Customizations, Features | Product variants   |
 
 ---
 
@@ -123,36 +124,36 @@ class [Resource]Service {
   static final [Resource]Service _instance = [Resource]Service._internal();
   factory [Resource]Service() => _instance;
   [Resource]Service._internal();
-  
+
   // ✅ Cache avec TTL intelligent
   final Map<String, CacheEntry<T>> _cache = {};
-  
+
   // ✅ API methods standardisées
   Future<List<[Resource]Model>> getAll({Map<String, String>? filters}) async {
     final cacheKey = 'all_${filters?.toString() ?? ''}';
-    
+
     // Check cache first
     if (_cache.containsKey(cacheKey) && !_cache[cacheKey]!.isExpired) {
       return _cache[cacheKey]!.data;
     }
-    
+
     // API call
-    final response = await ApiClient.get('/[resources]', 
+    final response = await ApiClient.get('/[resources]',
       queryParameters: {
         'output_format': 'JSON',
         'display': 'full',
         if (filters != null) ...filters,
       });
-    
+
     // Parse and cache
     final items = (response.data['[resources]'] as List)
         .map((json) => [Resource]Model.fromJson(json))
         .toList();
-    
+
     _cache[cacheKey] = CacheEntry(items, Duration(hours: 1));
     return items;
   }
-  
+
   Future<[Resource]Model?> getById(int id) async { /* ... */ }
   Future<[Resource]Model> create([Resource]Model item) async { /* ... */ }
   Future<[Resource]Model> update(int id, [Resource]Model item) async { /* ... */ }
@@ -169,37 +170,37 @@ class [Resource]Model {
   // ✅ Fields avec JsonKey mapping
   @JsonKey(name: 'id')
   final int? id;
-  
+
   @JsonKey(name: 'name')
   final String? name;
-  
+
   // ✅ Convertisseurs pour types complexes
   @JsonKey(name: 'active')
   @IntStringConverter()  // Gère string/int depuis PrestaShop
   final int? active;
-  
+
   // ✅ Constructor const
   const [Resource]Model({
     this.id,
     this.name,
     this.active,
   });
-  
+
   // ✅ JSON serialization
   factory [Resource]Model.fromJson(Map<String, dynamic> json) =>
       _$[Resource]ModelFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$[Resource]ModelToJson(this);
-  
+
   // ✅ Standard methods
   @override
   String toString() => '[Resource]Model(id: $id, name: $name)';
-  
+
   @override
-  bool operator ==(Object other) => 
+  bool operator ==(Object other) =>
       identical(this, other) ||
       other is [Resource]Model && id == other.id;
-  
+
   @override
   int get hashCode => id.hashCode;
 }
@@ -211,18 +212,18 @@ class [Resource]Model {
 // Pattern optionnel pour modules avec UI complexe
 class [Resource]Provider with ChangeNotifier {
   final [Resource]Service _service = [Resource]Service();
-  
+
   // ✅ State variables
   List<[Resource]Model> _items = [];
   bool _isLoading = false;
   String? _errorMessage;
-  
+
   // ✅ Getters
   List<[Resource]Model> get items => _items;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get hasError => _errorMessage != null;
-  
+
   // ✅ Actions
   Future<void> loadItems() async {
     try {
@@ -235,7 +236,7 @@ class [Resource]Provider with ChangeNotifier {
       _setLoading(false);
     }
   }
-  
+
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
@@ -260,12 +261,14 @@ mkdir -p lib/modules/products/{models,services,providers,views,widgets}
 ### 📝 2. Steps de Développement
 
 1. **📊 Analyser l'API PrestaShop**
+
    ```bash
    # Tester l'endpoint
    curl "http://localhost:8080/prestashop/proxy.php/products?output_format=JSON&display=full&limit=1"
    ```
 
 2. **🎯 Créer le Model**
+
    ```dart
    // Analyser la réponse JSON et créer le modèle
    @JsonSerializable()
@@ -273,12 +276,14 @@ mkdir -p lib/modules/products/{models,services,providers,views,widgets}
    ```
 
 3. **⚙️ Implémenter le Service**
+
    ```dart
    // Suivre le pattern validé
    class ProductService { /* ... */ }
    ```
 
 4. **🎨 Créer l'UI (si nécessaire)**
+
    ```dart
    // Page et widgets spécifiques
    class ProductListPage extends StatelessWidget { /* ... */ }
@@ -309,14 +314,14 @@ flutter run
 
 ### ✅ Cache Strategy
 
-| Data Type | TTL | Strategy | Reasoning |
-|-----------|-----|----------|-----------|
-| **Languages** | 24h | Long | Très stable |
-| **Currencies** | 6h | Medium | Rates peuvent changer |
-| **Countries** | 12h | Long | Relativement stable |
-| **Products** | 30min | Short | Stocks, prix changent |
-| **Customers** | 15min | Short | Data personnelle |
-| **Orders** | 5min | Very Short | États changent souvent |
+| Data Type      | TTL   | Strategy   | Reasoning              |
+| -------------- | ----- | ---------- | ---------------------- |
+| **Languages**  | 24h   | Long       | Très stable            |
+| **Currencies** | 6h    | Medium     | Rates peuvent changer  |
+| **Countries**  | 12h   | Long       | Relativement stable    |
+| **Products**   | 30min | Short      | Stocks, prix changent  |
+| **Customers**  | 15min | Short      | Data personnelle       |
+| **Orders**     | 5min  | Very Short | États changent souvent |
 
 ### 🚀 Optimization Patterns
 
@@ -388,13 +393,13 @@ test/
 
 ### 🏆 Architecture Success Metrics
 
-| Metric | Target | Configs Module | Status |
-|--------|--------|----------------|--------|
-| **API Response** | <1s | 847ms | ✅ |
-| **Cache Hit Rate** | >90% | 96% | ✅ |
-| **Memory Usage** | <50MB/module | ~15MB | ✅ |
-| **Code Coverage** | >80% | 85% | ✅ |
-| **Build Time Impact** | <5s/module | 2.3s | ✅ |
+| Metric                | Target       | Configs Module | Status |
+| --------------------- | ------------ | -------------- | ------ |
+| **API Response**      | <1s          | 847ms          | ✅     |
+| **Cache Hit Rate**    | >90%         | 96%            | ✅     |
+| **Memory Usage**      | <50MB/module | ~15MB          | ✅     |
+| **Code Coverage**     | >80%         | 85%            | ✅     |
+| **Build Time Impact** | <5s/module   | 2.3s           | ✅     |
 
 ---
 
