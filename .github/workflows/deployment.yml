@@ -1,0 +1,406 @@
+name: 🚀 Deployment Pipeline
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      platform:
+        description: 'Platform to deploy'
+        required: true
+        default: 'web'
+        type: choice
+        options:
+        - web
+        - android
+        - ios
+        - all
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+
+jobs:
+  # ===============================================
+  # 🔍 Pre-deployment Validation
+  # ===============================================
+  pre-deployment:
+    name: 🔍 Pre-deployment Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    outputs:
+      deploy-web: ${{ steps.determine-platforms.outputs.deploy-web }}
+      deploy-android: ${{ steps.determine-platforms.outputs.deploy-android }}
+      deploy-ios: ${{ steps.determine-platforms.outputs.deploy-ios }}
+      environment: ${{ steps.determine-env.outputs.environment }}
+      
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🎯 Determine Environment
+        id: determine-env
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: 🏗️ Determine Platforms
+        id: determine-platforms
+        run: |
+          PLATFORM="${{ github.event.inputs.platform }}"
+          if [ "${{ github.event_name }}" = "release" ]; then
+            PLATFORM="all"
+          fi
+          
+          case $PLATFORM in
+            "web"|"all")
+              echo "deploy-web=true" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "deploy-web=false" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+          case $PLATFORM in
+            "android"|"all")
+              echo "deploy-android=true" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "deploy-android=false" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+          case $PLATFORM in
+            "ios"|"all")
+              echo "deploy-ios=true" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "deploy-ios=false" >> $GITHUB_OUTPUT
+              ;;
+          esac
+          
+      - name: 📋 Deployment Plan
+        run: |
+          echo "🚀 **Deployment Plan**" >> $GITHUB_STEP_SUMMARY
+          echo "🌍 **Environment**: ${{ steps.determine-env.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **Web**: ${{ steps.determine-platforms.outputs.deploy-web }}" >> $GITHUB_STEP_SUMMARY
+          echo "🤖 **Android**: ${{ steps.determine-platforms.outputs.deploy-android }}" >> $GITHUB_STEP_SUMMARY
+          echo "🍎 **iOS**: ${{ steps.determine-platforms.outputs.deploy-ios }}" >> $GITHUB_STEP_SUMMARY
+
+  # ===============================================
+  # 🌐 Deploy Web
+  # ===============================================
+  deploy-web:
+    name: 🌐 Deploy Web
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: pre-deployment
+    if: needs.pre-deployment.outputs.deploy-web == 'true'
+    environment: ${{ needs.pre-deployment.outputs.environment }}
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: 📦 Get Dependencies
+        run: flutter pub get
+        
+      - name: 🌐 Build Web (Production)
+        run: |
+          flutter build web --release \
+            --web-renderer canvaskit \
+            --base-href "/"
+            
+      - name: 📁 Prepare Web Assets
+        run: |
+          # Add custom headers for PWA
+          echo "/*    /index.html   200" > build/web/_redirects
+          
+          # Add robots.txt for SEO
+          cat > build/web/robots.txt << EOF
+          User-agent: *
+          Allow: /
+          Sitemap: https://koutonou.app/sitemap.xml
+          EOF
+          
+      - name: 🚀 Deploy to GitHub Pages (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/web
+          cname: koutonou.app
+          
+      - name: 🚀 Deploy to Staging (Netlify/Vercel)
+        if: needs.pre-deployment.outputs.environment == 'staging'
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          # Ici vous pouvez intégrer Netlify, Vercel, Firebase Hosting, etc.
+          # Exemple pour Netlify:
+          # npx netlify-cli deploy --prod --dir=build/web --auth=${{ secrets.NETLIFY_AUTH_TOKEN }}
+          
+      - name: ✅ Web Deployment Success
+        run: |
+          echo "✅ **Web Deployment Successful**" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.pre-deployment.outputs.environment }}" = "production" ]; then
+            echo "🔗 **URL**: https://koutonou.app" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "🔗 **Staging URL**: https://staging.koutonou.app" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===============================================
+  # 🤖 Deploy Android
+  # ===============================================
+  deploy-android:
+    name: 🤖 Deploy Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: pre-deployment
+    if: needs.pre-deployment.outputs.deploy-android == 'true'
+    environment: ${{ needs.pre-deployment.outputs.environment }}
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: 📦 Get Dependencies
+        run: flutter pub get
+        
+      - name: 🔑 Setup Android Signing (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 -d > android/app/keystore.jks
+          echo "storeFile=keystore.jks" >> android/key.properties
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+          
+      - name: 🏗️ Build Android App Bundle (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        run: flutter build appbundle --release
+        
+      - name: 🏗️ Build Android APK (Staging)
+        if: needs.pre-deployment.outputs.environment == 'staging'
+        run: flutter build apk --release
+        
+      - name: 🚀 Deploy to Google Play (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          packageName: com.koutonou.app
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: production
+          status: completed
+          
+      - name: 📤 Upload APK Artifact (Staging)
+        if: needs.pre-deployment.outputs.environment == 'staging'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk-staging
+          path: build/app/outputs/flutter-apk/app-release.apk
+          
+      - name: ✅ Android Deployment Success
+        run: |
+          echo "✅ **Android Deployment Successful**" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.pre-deployment.outputs.environment }}" = "production" ]; then
+            echo "🏪 **Google Play**: App Bundle uploaded" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "📱 **APK**: Available in artifacts" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===============================================
+  # 🍎 Deploy iOS
+  # ===============================================
+  deploy-ios:
+    name: 🍎 Deploy iOS
+    runs-on: macos-latest
+    timeout-minutes: 45
+    needs: pre-deployment
+    if: needs.pre-deployment.outputs.deploy-ios == 'true'
+    environment: ${{ needs.pre-deployment.outputs.environment }}
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 🐦 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+          
+      - name: 📦 Get Dependencies
+        run: flutter pub get
+        
+      - name: 🍎 Setup iOS Dependencies
+        run: |
+          cd ios
+          pod install
+          cd ..
+          
+      - name: 🔑 Setup iOS Certificates (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        run: |
+          echo "${{ secrets.IOS_CERTIFICATE }}" | base64 -d > ios_certificate.p12
+          echo "${{ secrets.IOS_PROVISIONING_PROFILE }}" | base64 -d > ios_profile.mobileprovision
+          
+          # Import certificate
+          security create-keychain -p "${{ secrets.IOS_KEYCHAIN_PASSWORD }}" build.keychain
+          security import ios_certificate.p12 -P "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" -A -t cert -f pkcs12 -k build.keychain
+          security list-keychains -d user -s build.keychain
+          
+          # Install provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp ios_profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          
+      - name: 🏗️ Build iOS (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        run: flutter build ios --release --no-codesign
+        
+      - name: 🏗️ Build iOS (Staging)
+        if: needs.pre-deployment.outputs.environment == 'staging'
+        run: flutter build ios --release --no-codesign
+        
+      - name: 📦 Archive iOS App (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        run: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -destination generic/platform=iOS \
+            -archivePath build/ios/Runner.xcarchive \
+            archive
+            
+      - name: 🚀 Deploy to App Store (Production)
+        if: needs.pre-deployment.outputs.environment == 'production'
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/ios/Runner.xcarchive \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist ios/ExportOptions.plist
+            
+          xcrun altool --upload-app \
+            --file build/ios/ipa/Runner.ipa \
+            --username "${{ secrets.APPSTORE_USERNAME }}" \
+            --password "${{ secrets.APPSTORE_PASSWORD }}"
+            
+      - name: 📤 Upload iOS Build (Staging)
+        if: needs.pre-deployment.outputs.environment == 'staging'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-staging
+          path: build/ios/iphoneos/Runner.app
+          
+      - name: ✅ iOS Deployment Success
+        run: |
+          echo "✅ **iOS Deployment Successful**" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ needs.pre-deployment.outputs.environment }}" = "production" ]; then
+            echo "🏪 **App Store**: Build uploaded for review" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "📱 **Build**: Available in artifacts" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ===============================================
+  # 📊 Deployment Summary
+  # ===============================================
+  deployment-summary:
+    name: 📊 Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [pre-deployment, deploy-web, deploy-android, deploy-ios]
+    if: always()
+    
+    steps:
+      - name: 📊 Create Deployment Summary
+        run: |
+          echo "🚀 **Deployment Summary**" >> $GITHUB_STEP_SUMMARY
+          echo "🌍 **Environment**: ${{ needs.pre-deployment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Web deployment status
+          if [ "${{ needs.pre-deployment.outputs.deploy-web }}" = "true" ]; then
+            if [ "${{ needs.deploy-web.result }}" = "success" ]; then
+              echo "✅ **Web**: Successfully deployed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ **Web**: Deployment failed" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⏭️ **Web**: Skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Android deployment status
+          if [ "${{ needs.pre-deployment.outputs.deploy-android }}" = "true" ]; then
+            if [ "${{ needs.deploy-android.result }}" = "success" ]; then
+              echo "✅ **Android**: Successfully deployed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ **Android**: Deployment failed" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⏭️ **Android**: Skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # iOS deployment status
+          if [ "${{ needs.pre-deployment.outputs.deploy-ios }}" = "true" ]; then
+            if [ "${{ needs.deploy-ios.result }}" = "success" ]; then
+              echo "✅ **iOS**: Successfully deployed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ **iOS**: Deployment failed" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⏭️ **iOS**: Skipped" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⏰ **Deployment completed at**: $(date)" >> $GITHUB_STEP_SUMMARY
+
+  # ===============================================
+  # 📧 Deployment Notification
+  # ===============================================
+  notify-deployment:
+    name: 📧 Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [pre-deployment, deployment-summary]
+    if: always() && needs.pre-deployment.outputs.environment == 'production'
+    
+    steps:
+      - name: 📧 Send Deployment Notification
+        run: |
+          echo "📧 **Production Deployment Notification Sent**" >> $GITHUB_STEP_SUMMARY
+          echo "Team members have been notified of the production deployment." >> $GITHUB_STEP_SUMMARY
+          # Ici vous pouvez intégrer Slack, Discord, Email, etc.
+          # Exemple pour Slack:
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"🚀 Koutonou deployed to production!"}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}

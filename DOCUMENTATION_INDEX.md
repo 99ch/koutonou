@@ -86,7 +86,7 @@ Cette page centralise toute la documentation du projet **Koutonou** - plateforme
 
 ## ⚙️ Scripts & Outils
 
-### ️ **Outils de Génération**
+### 🛠️ **Outils de Génération**
 
 ```bash
 # Générateur de modules
@@ -101,6 +101,18 @@ dart run tools/simple_generate.dart
 Les scripts de test MVP ont été supprimés lors de la transition vers la branche production.
 Utilisez `flutter analyze` et `flutter test` pour la validation du code.
 
+### 🚀 **CI/CD Pipeline**
+
+Le projet inclut un pipeline GitHub Actions complet :
+
+- **🔍 Analyse de code** : Formatting, linting, sécurité
+- **🧪 Tests automatisés** : Tests unitaires avec coverage
+- **🏗️ Builds multi-plateformes** : Android, iOS, Web
+- **🚀 Déploiement automatique** : Staging et production
+- **📊 Rapports de qualité** : Coverage, performance, sécurité
+
+📋 **Configuration** : Voir [.github/ACTIONS_SETUP.md](./.github/ACTIONS_SETUP.md)
+
 ---
 
 ## 📊 Structure Documentation
@@ -114,9 +126,15 @@ docs/
 ├── 🏆 MVP_PHASE1_SUCCESS_REPORT.md  # Rapport succès Phase 1
 ├── 🧪 ROUTER_TEST_GUIDE.md          # Guide tests complet
 ├── 📚 DOCUMENTATION_INDEX.md        # Ce fichier (navigation)
-└── 🔧 Tools (Générateurs de code)
-    ├── tools/generate.dart          # Générateur principal
-    └── tools/simple_generate.dart   # Générateur simplifié
+├── 🔧 Tools (Générateurs de code)
+│   ├── tools/generate.dart          # Générateur principal
+│   └── tools/simple_generate.dart   # Générateur simplifié
+└── 🚀 CI/CD (GitHub Actions)
+    ├── .github/workflows/ci-cd.yml         # Pipeline principal
+    ├── .github/workflows/pr-validation.yml # Validation PR
+    ├── .github/workflows/security.yml      # Audit sécurité
+    ├── .github/workflows/deployment.yml    # Déploiement
+    └── .github/ACTIONS_SETUP.md            # Configuration CI/CD
 ```
 
 ---
@@ -141,6 +159,8 @@ docs/
 1. **Test Guide** : [ROUTER_TEST_GUIDE.md](./ROUTER_TEST_GUIDE.md)
 2. **Flutter Tests** : `flutter test`
 3. **Code Analysis** : `flutter analyze`
+4. **CI/CD Pipeline** : GitHub Actions workflows
+5. **Coverage Reports** : Codecov integration
 
 ### 🏗️ **Architecture/Tech Leads**
 
@@ -189,6 +209,7 @@ Pour chaque nouvelle feature/module :
 - [x] **Router production** : Navigation business uniquement
 - [x] **Flutter analyze** : 0 erreur, warnings acceptables
 - [x] **Branche production_ready** : Commit 13fccd8
+- [x] **CI/CD Pipeline** : GitHub Actions configuré
 
 ### 🚧 **À Développer (Phase 2)**
 
@@ -198,6 +219,7 @@ Pour chaque nouvelle feature/module :
 - [ ] **Module Orders** : Commandes, historique
 - [ ] **UI/UX** : Design system, thème
 - [ ] **Tests unitaires** : Coverage > 80%
+- [ ] **Déploiement automatique** : Configuration stores (Google Play, App Store)
 
 ---
 
