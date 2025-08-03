@@ -1,0 +1,158 @@
+{
+  "generated_at": "2025-07-31T09:59:09.967469",
+  "mvp_phase": 1,
+  "total_resources": 3,
+  "successful_resources": 3,
+  "failed_resources": 0,
+  "resources": {
+    "languages": {
+      "resource": "languages",
+      "timestamp": "2025-07-31T09:59:07.512771",
+      "schema": "{\"language\":[]}",
+      "examples": [
+        {
+          "id": 1,
+          "name": "Français (French)",
+          "iso_code": "fr",
+          "locale": "fr-FR",
+          "language_code": "fr",
+          "active": 1,
+          "date_format_lite": "d/m/Y",
+          "date_format_full": "d/m/Y H:i:s"
+        }
+      ],
+      "metadata": {
+        "has_schema": true,
+        "example_count": 1,
+        "estimated_complexity": "simple",
+        "detected_fields": [
+          "id",
+          "name",
+          "iso_code",
+          "locale",
+          "language_code",
+          "active",
+          "date_format_lite",
+          "date_format_full"
+        ],
+        "detected_types": {
+          "id": "int",
+          "name": "String",
+          "iso_code": "String",
+          "locale": "String",
+          "language_code": "String",
+          "active": "int",
+          "date_format_lite": "DateTime",
+          "date_format_full": "DateTime"
+        }
+      }
+    },
+    "currencies": {
+      "resource": "currencies",
+      "timestamp": "2025-07-31T09:59:08.569604",
+      "schema": "{\"currency\":[]}",
+      "examples": [
+        {
+          "id": 1,
+          "names": "euro",
+          "name": "Euro",
+          "symbol": "€",
+          "iso_code": "EUR",
+          "numeric_iso_code": "978",
+          "precision": 2,
+          "conversion_rate": "1.000000",
+          "active": 1
+        }
+      ],
+      "metadata": {
+        "has_schema": true,
+        "example_count": 1,
+        "estimated_complexity": "simple",
+        "detected_fields": [
+          "id",
+          "names",
+          "name",
+          "symbol",
+          "iso_code",
+          "numeric_iso_code",
+          "precision",
+          "conversion_rate",
+          "active"
+        ],
+        "detected_types": {
+          "id": "int",
+          "names": "String",
+          "name": "String",
+          "symbol": "String",
+          "iso_code": "String",
+          "numeric_iso_code": "String",
+          "precision": "int",
+          "conversion_rate": "String",
+          "active": "int"
+        }
+      }
+    },
+    "countries": {
+      "resource": "countries",
+      "timestamp": "2025-07-31T09:59:09.217785",
+      "schema": "{\"country\":[]}",
+      "examples": [
+        {
+          "id": 1,
+          "id_zone": 1,
+          "call_prefix": 49,
+          "iso_code": "DE",
+          "need_zip_code": "1",
+          "zip_code_format": "NNNNN",
+          "display_tax_label": "1",
+          "name": "Allemagne"
+        },
+        {
+          "id": 2,
+          "id_zone": 1,
+          "call_prefix": 43,
+          "iso_code": "AT",
+          "need_zip_code": "1",
+          "zip_code_format": "NNNN",
+          "display_tax_label": "1",
+          "name": "Autriche"
+        },
+        {
+          "id": 3,
+          "id_zone": 1,
+          "call_prefix": 32,
+          "iso_code": "BE",
+          "need_zip_code": "1",
+          "zip_code_format": "NNNN",
+          "display_tax_label": "1",
+          "name": "Belgique"
+        }
+      ],
+      "metadata": {
+        "has_schema": true,
+        "example_count": 3,
+        "estimated_complexity": "simple",
+        "detected_fields": [
+          "id",
+          "id_zone",
+          "call_prefix",
+          "iso_code",
+          "need_zip_code",
+          "zip_code_format",
+          "display_tax_label",
+          "name"
+        ],
+        "detected_types": {
+          "id": "int",
+          "id_zone": "int",
+          "call_prefix": "int",
+          "iso_code": "String",
+          "need_zip_code": "String",
+          "zip_code_format": "String",
+          "display_tax_label": "String",
+          "name": "String"
+        }
+      }
+    }
+  }
+}
