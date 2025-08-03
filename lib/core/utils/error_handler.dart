@@ -1,4 +1,3 @@
-
 // Provides centralized error handling for the Koutonou application.
 // This handler processes all types of errors (API, network, validation, business)
 // and provides consistent error logging, user notification, and recovery mechanisms.

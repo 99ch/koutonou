@@ -2,11 +2,11 @@ name: ✅ Pull Request Validation
 
 on:
   pull_request:
-    branches: [ main, production_ready, develop ]
+    branches: [main, production_ready, develop]
     types: [opened, synchronize, reopened, ready_for_review]
 
 env:
-  FLUTTER_VERSION: '3.24.0'
+  FLUTTER_VERSION: "3.24.0"
 
 jobs:
   # ===============================================
@@ -17,11 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.event.pull_request.draft == false
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 📋 PR Information
         run: |
           echo "📋 **Pull Request Information**" >> $GITHUB_STEP_SUMMARY
@@ -31,7 +31,7 @@ jobs:
           echo "🎯 **Target**: ${{ github.event.pull_request.base.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "📊 **Changes**: +${{ github.event.pull_request.additions }} -${{ github.event.pull_request.deletions }}" >> $GITHUB_STEP_SUMMARY
           echo "📁 **Files**: ${{ github.event.pull_request.changed_files }}" >> $GITHUB_STEP_SUMMARY
-          
+
       - name: 🔍 Check PR Title Format
         run: |
           TITLE="${{ github.event.pull_request.title }}"
@@ -52,46 +52,46 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: pr-validation
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🔍 Quick Analysis
         run: |
           echo "🔍 **Quick Analysis Results**" >> $GITHUB_STEP_SUMMARY
-          
+
           # Formatting check
           if dart format --output=none --set-exit-if-changed lib/ test/ tools/; then
             echo "✅ **Formatting**: Correct" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Formatting**: Needs fix - run \`dart format .\`" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Import analysis
           if flutter analyze --fatal-infos --fatal-warnings; then
             echo "✅ **Analysis**: No issues" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Analysis**: Issues found" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
       - name: 📊 Changed Files Analysis
         run: |
           echo "📁 **Files Changed in this PR**" >> $GITHUB_STEP_SUMMARY
           git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | head -20 >> $GITHUB_STEP_SUMMARY
-          
+
           DART_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} | grep '\.dart$' | wc -l)
           echo "🐦 **Dart files changed**: $DART_FILES" >> $GITHUB_STEP_SUMMARY
 
@@ -103,25 +103,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: quick-checks
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🧪 Run Tests with Coverage
         run: |
           flutter test --coverage --reporter json > test-results-pr.json
-          
+
       - name: 📊 Test Coverage Analysis
         run: |
           if [ -f "coverage/lcov.info" ]; then
@@ -153,32 +153,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: pr-tests
-    
+
     strategy:
       matrix:
         platform: [android, web]
-        
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: ☕ Setup Java (Android only)
         if: matrix.platform == 'android'
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          
+          distribution: "temurin"
+          java-version: "17"
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🏗️ Build for ${{ matrix.platform }}
         run: |
           if [ "${{ matrix.platform }}" = "android" ]; then
@@ -198,7 +198,7 @@ jobs:
     timeout-minutes: 5
     needs: [pr-validation, quick-checks, pr-tests, build-validation]
     if: always()
-    
+
     steps:
       - name: 📝 Generate Review Checklist
         run: |
@@ -233,40 +233,40 @@ jobs:
     runs-on: ubuntu-latest
     needs: [pr-validation, quick-checks, pr-tests, build-validation]
     if: always()
-    
+
     steps:
       - name: 🎯 Final Status Report
         run: |
           echo "🎯 **PR Validation Summary**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Check results
           if [ "${{ needs.pr-validation.result }}" = "success" ]; then
             echo "✅ **PR Validation**: Passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **PR Validation**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.quick-checks.result }}" = "success" ]; then
             echo "✅ **Quick Checks**: Passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Quick Checks**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.pr-tests.result }}" = "success" ]; then
             echo "✅ **Tests**: Passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Tests**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [ "${{ needs.build-validation.result }}" = "success" ]; then
             echo "✅ **Builds**: Passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Builds**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Overall status
           if [[ "${{ needs.pr-validation.result }}" = "success" && "${{ needs.quick-checks.result }}" = "success" && "${{ needs.pr-tests.result }}" = "success" && "${{ needs.build-validation.result }}" = "success" ]]; then
             echo "🎉 **Overall Status**: ✅ READY FOR REVIEW" >> $GITHUB_STEP_SUMMARY

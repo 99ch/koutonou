@@ -63,7 +63,8 @@ class LanguageService {
         'languages',
         queryParameters: {
           'output_format': 'JSON',
-          'display': 'full', // Récupère toutes les données au lieu des IDs seulement
+          'display':
+              'full', // Récupère toutes les données au lieu des IDs seulement
           if (filters != null) ...filters,
         },
       );

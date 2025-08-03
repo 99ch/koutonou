@@ -7,14 +7,14 @@ part of 'order_model.dart';
 // **************************************************************************
 
 OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
-      id: (json['id'] as num).toInt(),
-      reference: json['reference'] as String?,
-      id_customer: (json['id_customer'] as num?)?.toInt(),
-      current_state: (json['current_state'] as num?)?.toInt(),
-      total_paid: json['total_paid'] as String?,
-      date_add: json['date_add'] as String?,
-      date_upd: json['date_upd'] as String?,
-    );
+  id: (json['id'] as num).toInt(),
+  reference: json['reference'] as String?,
+  id_customer: (json['id_customer'] as num?)?.toInt(),
+  current_state: (json['current_state'] as num?)?.toInt(),
+  total_paid: json['total_paid'] as String?,
+  date_add: json['date_add'] as String?,
+  date_upd: json['date_upd'] as String?,
+);
 
 Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
     <String, dynamic>{

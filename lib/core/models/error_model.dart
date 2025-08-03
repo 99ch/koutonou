@@ -1,4 +1,3 @@
-
 // Defines the error model for API error responses in the Koutonou application.
 // This model provides a standardized structure for handling API errors,
 // including error codes, messages, field-specific errors, and error metadata.

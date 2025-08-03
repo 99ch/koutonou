@@ -1,4 +1,3 @@
-
 // Defines the base response model for API responses in the Koutonou application.
 // This model provides a standardized structure for handling API responses,
 // including success/error states, data payload, pagination, and metadata.

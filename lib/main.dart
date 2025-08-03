@@ -346,26 +346,16 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.store,
-              size: 120,
-              color: Colors.blue,
-            ),
+            Icon(Icons.store, size: 120, color: Colors.blue),
             SizedBox(height: 24),
             Text(
               'Bienvenue sur Koutonou',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             Text(
               'Votre marketplace e-commerce moderne',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
             SizedBox(height: 32),
             // TODO: Ajouter des widgets pour navigation vers produits, catégories, etc.
@@ -375,14 +365,8 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Accueil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.store),
-            label: 'Produits',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
+          BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Produits'),
           BottomNavigationBarItem(
             icon: Icon(Icons.category),
             label: 'Catégories',

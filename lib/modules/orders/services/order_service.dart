@@ -10,12 +10,12 @@ class OrderService {
   OrderService._internal();
 
   /// Simulation des méthodes de base
-  
+
   /// Récupère tous les orders
   Future<List<Map<String, dynamic>>> getAll() async {
     // TODO: Implémenter l'appel API réel
     print('📡 Appel API: GET /orders');
-    
+
     // Simulation de données
     return [
       {'id': 1, 'name': 'Exemple orders 1'},
@@ -26,7 +26,7 @@ class OrderService {
   /// Récupère un OrderModel par son ID
   Future<Map<String, dynamic>?> getById(String id) async {
     print('📡 Appel API: GET /orders/$id');
-    
+
     // Simulation
     return {'id': int.parse(id), 'name': 'Exemple orders $id'};
   }
@@ -34,15 +34,18 @@ class OrderService {
   /// Crée un nouveau OrderModel
   Future<Map<String, dynamic>> create(Map<String, dynamic> data) async {
     print('📡 Appel API: POST /orders');
-    
+
     // Simulation
     return {...data, 'id': DateTime.now().millisecondsSinceEpoch};
   }
 
   /// Met à jour un OrderModel
-  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> update(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     print('📡 Appel API: PUT /orders/$id');
-    
+
     // Simulation
     return {...data, 'id': int.parse(id)};
   }
@@ -50,7 +53,7 @@ class OrderService {
   /// Supprime un OrderModel
   Future<bool> delete(String id) async {
     print('📡 Appel API: DELETE /orders/$id');
-    
+
     // Simulation
     return true;
   }

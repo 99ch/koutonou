@@ -117,12 +117,12 @@ class SimplePrestaShopGenerator {
   /// Génère tous les modèles et services
   Future<void> generateAll() async {
     print('🚀 Génération complète PrestaShop Phase 2');
-    
+
     for (final config in resourceConfigs.values) {
       print('📦 Génération ${config.name}...');
       await generateResource(config);
     }
-    
+
     print('✅ Génération complète terminée avec succès');
   }
 
@@ -130,16 +130,16 @@ class SimplePrestaShopGenerator {
   Future<void> generateResource(ResourceConfig config) async {
     try {
       print('📝 Génération ${config.modelClassName}...');
-      
+
       // Créer les répertoires
       await _createDirectories(config);
-      
+
       // Générer le modèle
       await _generateModel(config);
-      
+
       // Générer le service
       await _generateService(config);
-      
+
       print('✅ ${config.name} généré avec succès');
     } catch (e) {
       print('❌ Erreur génération ${config.name}: $e');
@@ -150,7 +150,7 @@ class SimplePrestaShopGenerator {
   /// Crée les répertoires nécessaires
   Future<void> _createDirectories(ResourceConfig config) async {
     final basePath = 'lib/modules/${config.name}';
-    
+
     await Directory('$basePath/models').create(recursive: true);
     await Directory('$basePath/services').create(recursive: true);
     print('📁 Répertoires créés pour ${config.name}');
@@ -161,7 +161,7 @@ class SimplePrestaShopGenerator {
     final modelContent = _buildModelContent(config);
     final fileName = config.name.toLowerCase().replaceAll('s', '');
     final filePath = 'lib/modules/${config.name}/models/${fileName}_model.dart';
-    
+
     await File(filePath).writeAsString(modelContent);
     print('📄 Modèle généré: $filePath');
   }
@@ -170,8 +170,9 @@ class SimplePrestaShopGenerator {
   Future<void> _generateService(ResourceConfig config) async {
     final serviceContent = _buildServiceContent(config);
     final fileName = config.name.toLowerCase().replaceAll('s', '');
-    final filePath = 'lib/modules/${config.name}/services/${fileName}_service.dart';
-    
+    final filePath =
+        'lib/modules/${config.name}/services/${fileName}_service.dart';
+
     await File(filePath).writeAsString(serviceContent);
     print('📄 Service généré: $filePath');
   }
@@ -205,7 +206,9 @@ class SimplePrestaShopGenerator {
       final fieldType = entry.value;
       final isRequired = requiredFields.contains(fieldName);
 
-      buffer.writeln('  /// $fieldName ${isRequired ? '(requis)' : '(optionnel)'}');
+      buffer.writeln(
+        '  /// $fieldName ${isRequired ? '(requis)' : '(optionnel)'}',
+      );
       buffer.writeln("  @JsonKey(name: '$fieldName')");
       buffer.writeln('  final $fieldType $fieldName;');
       buffer.writeln();
@@ -227,10 +230,14 @@ class SimplePrestaShopGenerator {
     buffer.writeln();
 
     // Factory methods
-    buffer.writeln('  factory $className.fromJson(Map<String, dynamic> json) =>');
+    buffer.writeln(
+      '  factory $className.fromJson(Map<String, dynamic> json) =>',
+    );
     buffer.writeln('      _\$${className}FromJson(json);');
     buffer.writeln();
-    buffer.writeln('  Map<String, dynamic> toJson() => _\$${className}ToJson(this);');
+    buffer.writeln(
+      '  Map<String, dynamic> toJson() => _\$${className}ToJson(this);',
+    );
     buffer.writeln();
 
     // toString
@@ -242,7 +249,9 @@ class SimplePrestaShopGenerator {
     buffer.writeln('  @override');
     buffer.writeln('  bool operator ==(Object other) =>');
     buffer.writeln('      identical(this, other) ||');
-    buffer.writeln('      other is $className && runtimeType == other.runtimeType && id == other.id;');
+    buffer.writeln(
+      '      other is $className && runtimeType == other.runtimeType && id == other.id;',
+    );
     buffer.writeln();
     buffer.writeln('  @override');
     buffer.writeln('  int get hashCode => id.hashCode;');
@@ -426,8 +435,10 @@ Examples:
       if (config.hasStates) print('    └─ 📊 États supportés');
       print('');
     }
-    
-    print('Total: ${configs.length} ressources principales testées et validées ✅');
+
+    print(
+      'Total: ${configs.length} ressources principales testées et validées ✅',
+    );
   }
 }
 

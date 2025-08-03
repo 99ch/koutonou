@@ -3,12 +3,12 @@ name: 🔒 Security & Dependencies
 on:
   schedule:
     # Tous les lundis à 9h UTC
-    - cron: '0 9 * * 1'
+    - cron: "0 9 * * 1"
   push:
-    branches: [ main, production_ready ]
+    branches: [main, production_ready]
     paths:
-      - 'pubspec.yaml'
-      - 'pubspec.lock'
+      - "pubspec.yaml"
+      - "pubspec.lock"
   workflow_dispatch:
 
 jobs:
@@ -19,33 +19,33 @@ jobs:
     name: 🔒 Security Audit
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
+          flutter-version: "3.24.0"
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🔒 Run Security Audit
         run: |
           dart pub global activate pana
           dart pub global run pana --no-warning --json > security-report.json
-          
+
       - name: 📊 Security Report
         run: |
           echo "🔒 **Security Audit Results**" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
           head -20 security-report.json >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          
+
       - name: 📤 Upload Security Report
         uses: actions/upload-artifact@v4
         with:
@@ -60,23 +60,23 @@ jobs:
     name: 📦 Dependency Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
+          flutter-version: "3.24.0"
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Analyze Dependencies
         run: |
           flutter pub deps --json > dependencies.json
           flutter pub outdated --json > outdated.json
-          
+
       - name: 📊 Dependencies Report
         run: |
           echo "📦 **Dependencies Analysis**" >> $GITHUB_STEP_SUMMARY
@@ -86,7 +86,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "⬆️ **Outdated Packages:**" >> $GITHUB_STEP_SUMMARY
           flutter pub outdated >> $GITHUB_STEP_SUMMARY || echo "All packages up to date!" >> $GITHUB_STEP_SUMMARY
-          
+
       - name: 📤 Upload Dependency Reports
         uses: actions/upload-artifact@v4
         with:
@@ -103,24 +103,24 @@ jobs:
     name: 🚨 Vulnerability Scan
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 🚨 Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+
       - name: 📤 Upload Trivy Scan Results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
   # ===============================================
   # 📈 Dependency Update PR
@@ -130,30 +130,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event_name == 'schedule'
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
+          flutter-version: "3.24.0"
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Update Dependencies
         run: |
           flutter pub upgrade
-          
+
       - name: 🧪 Test After Update
         run: |
           flutter pub get
           flutter analyze
           flutter test || echo "Tests failed after dependency update"
-          
+
       - name: 📝 Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -162,18 +162,18 @@ jobs:
           title: "📦 Auto: Update Flutter Dependencies"
           body: |
             🤖 **Mise à jour automatique des dépendances**
-            
+
             Cette PR met à jour automatiquement les dépendances Flutter.
-            
+
             📋 **Changements:**
             - Mise à jour des packages vers les dernières versions compatibles
             - Tests d'analyse et de compatibilité effectués
-            
+
             ⚠️ **À vérifier:**
             - [ ] Tests unitaires passent
             - [ ] Tests d'intégration passent
             - [ ] Aucune régression fonctionnelle
-            
+
             🔗 **Généré par:** GitHub Actions - Dependency Update Workflow
           branch: auto/dependency-update
           base: develop

@@ -1,4 +1,3 @@
-
 // Defines validation-specific exceptions for the Koutonou application.
 // These exceptions handle form validation errors, data validation failures,
 // and business rule violations with detailed field-level error information.

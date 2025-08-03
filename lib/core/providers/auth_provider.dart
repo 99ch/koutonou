@@ -1,4 +1,3 @@
-
 // Manages the global authentication state using ChangeNotifier, allowing reactive updates
 // to the UI. Integrates with AuthService for login, signup, and logout operations, and
 // ensures secure handling of user data and errors.

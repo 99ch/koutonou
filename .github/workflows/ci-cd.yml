@@ -2,14 +2,14 @@ name: 🚀 Koutonou CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, production_ready, develop ]
+    branches: [main, production_ready, develop]
   pull_request:
-    branches: [ main, production_ready ]
+    branches: [main, production_ready]
   workflow_dispatch:
 
 env:
-  FLUTTER_VERSION: '3.24.0'
-  JAVA_VERSION: '17'
+  FLUTTER_VERSION: "3.24.0"
+  JAVA_VERSION: "17"
 
 jobs:
   # ===============================================
@@ -19,33 +19,33 @@ jobs:
     name: 📊 Code Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: ☕ Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
-          
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🔍 Verify Formatting
         run: dart format --output=none --set-exit-if-changed lib/ test/ tools/
-        
+
       - name: 📊 Analyze Code
         run: flutter analyze --fatal-infos
-        
+
       - name: 🔒 Security Analysis
         run: |
           dart pub global activate pana
@@ -59,37 +59,37 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: analyze
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: ☕ Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
-          
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🧪 Run Unit Tests
         run: flutter test --coverage --reporter json > test-results.json
-        
+
       - name: 📊 Upload Coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           file: coverage/lcov.info
           name: koutonou-coverage
           fail_ci_if_error: false
-          
+
       - name: 📋 Test Report
         uses: dorny/test-reporter@v1
         if: always()
@@ -106,40 +106,40 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: [analyze, test]
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: ☕ Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: "temurin"
           java-version: ${{ env.JAVA_VERSION }}
-          
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🏗️ Build Android APK
         run: flutter build apk --release --target-platform android-arm64
-        
+
       - name: 🏗️ Build Android App Bundle
         run: flutter build appbundle --release --target-platform android-arm64
-        
+
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
-          
+
       - name: 📤 Upload AAB Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -155,30 +155,30 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 45
     needs: [analyze, test]
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🍎 Setup iOS
         run: |
           cd ios
           pod install
           cd ..
-          
+
       - name: 🏗️ Build iOS (No Codesign)
         run: flutter build ios --release --no-codesign
-        
+
       - name: 📤 Upload iOS Build
         uses: actions/upload-artifact@v4
         with:
@@ -194,31 +194,31 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [analyze, test]
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: 'stable'
+          channel: "stable"
           cache: true
-          
+
       - name: 📦 Get Dependencies
         run: flutter pub get
-        
+
       - name: 🌐 Build Web
         run: flutter build web --release --web-renderer canvaskit
-        
+
       - name: 📤 Upload Web Build
         uses: actions/upload-artifact@v4
         with:
           name: web-build
           path: build/web/
           retention-days: 30
-          
+
       - name: 🚀 Deploy to GitHub Pages (main branch only)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v3
@@ -235,23 +235,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: build-android
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 📥 Download APK
         uses: actions/download-artifact@v4
         with:
           name: android-apk
           path: ./artifacts
-          
+
       - name: 📊 APK Analysis
         run: |
           ls -la ./artifacts/
           APK_SIZE=$(du -h ./artifacts/app-release.apk | cut -f1)
           echo "🤖 Android APK Size: $APK_SIZE" >> $GITHUB_STEP_SUMMARY
-          
+
       - name: 📊 Bundle Analysis (if web built)
         if: needs.build-web.result == 'success'
         run: |
@@ -266,16 +266,16 @@ jobs:
     timeout-minutes: 10
     needs: [build-android, build-ios, build-web, performance-analysis]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        
+
       - name: 📥 Download All Artifacts
         uses: actions/download-artifact@v4
         with:
           path: ./release-artifacts
-          
+
       - name: 📋 Create Release Notes
         id: release-notes
         run: |
@@ -288,7 +288,7 @@ jobs:
           echo "🔗 **Liens**:" >> release-notes.md
           echo "- [📱 Télécharger APK](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> release-notes.md
           echo "- [🌐 Version Web](https://koutonou.app)" >> release-notes.md
-          
+
       - name: 🏷️ Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -309,7 +309,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [analyze, test, build-android, build-ios, build-web]
     if: always() && (needs.analyze.result == 'success' && needs.test.result == 'success')
-    
+
     steps:
       - name: 🎉 Success Notification
         run: |
@@ -328,7 +328,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [analyze, test, build-android, build-ios, build-web]
     if: always() && (needs.analyze.result == 'failure' || needs.test.result == 'failure')
-    
+
     steps:
       - name: ❌ Failure Notification
         run: |

@@ -1,4 +1,3 @@
-
 // Manages the global cache state using ChangeNotifier for reactive UI updates.
 // Integrates with CacheService for cache monitoring, statistics, and management.
 // Provides insights into cache performance and storage usage.

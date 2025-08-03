@@ -1,4 +1,3 @@
-
 // Manages the global user state using ChangeNotifier for reactive UI updates.
 // Integrates with UserService for profile management, preferences, addresses,
 // favorites, and activity history. Provides caching and error handling.

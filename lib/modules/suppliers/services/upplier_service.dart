@@ -10,12 +10,12 @@ class SupplierService {
   SupplierService._internal();
 
   /// Simulation des méthodes de base
-  
+
   /// Récupère tous les suppliers
   Future<List<Map<String, dynamic>>> getAll() async {
     // TODO: Implémenter l'appel API réel
     print('📡 Appel API: GET /suppliers');
-    
+
     // Simulation de données
     return [
       {'id': 1, 'name': 'Exemple suppliers 1'},
@@ -26,7 +26,7 @@ class SupplierService {
   /// Récupère un SupplierModel par son ID
   Future<Map<String, dynamic>?> getById(String id) async {
     print('📡 Appel API: GET /suppliers/$id');
-    
+
     // Simulation
     return {'id': int.parse(id), 'name': 'Exemple suppliers $id'};
   }
@@ -34,15 +34,18 @@ class SupplierService {
   /// Crée un nouveau SupplierModel
   Future<Map<String, dynamic>> create(Map<String, dynamic> data) async {
     print('📡 Appel API: POST /suppliers');
-    
+
     // Simulation
     return {...data, 'id': DateTime.now().millisecondsSinceEpoch};
   }
 
   /// Met à jour un SupplierModel
-  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> update(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     print('📡 Appel API: PUT /suppliers/$id');
-    
+
     // Simulation
     return {...data, 'id': int.parse(id)};
   }
@@ -50,7 +53,7 @@ class SupplierService {
   /// Supprime un SupplierModel
   Future<bool> delete(String id) async {
     print('📡 Appel API: DELETE /suppliers/$id');
-    
+
     // Simulation
     return true;
   }

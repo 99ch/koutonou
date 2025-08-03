@@ -5,6 +5,7 @@ Ce dossier contient tous les workflows GitHub Actions pour l'intégration contin
 ## 📋 Workflows Disponibles
 
 ### 🔄 `ci-cd.yml` - Pipeline Principal
+
 **Déclenché par** : Push sur branches principales, PR, manual
 **Durée** : ~25-40 minutes
 
@@ -15,6 +16,7 @@ Ce dossier contient tous les workflows GitHub Actions pour l'intégration contin
 - 🚀 **Release** : Automatique sur branche main
 
 ### ✅ `pr-validation.yml` - Validation Pull Request
+
 **Déclenché par** : Ouverture/MAJ de PR
 **Durée** : ~15-20 minutes
 
@@ -25,6 +27,7 @@ Ce dossier contient tous les workflows GitHub Actions pour l'intégration contin
 - 📝 **Checklist** : Guide de review automatique
 
 ### 🔒 `security.yml` - Audit Sécurité
+
 **Déclenché par** : Hebdomadaire (lundi 9h), changements deps, manual
 **Durée** : ~10-15 minutes
 
@@ -34,6 +37,7 @@ Ce dossier contient tous les workflows GitHub Actions pour l'intégration contin
 - 📈 **MAJ automatique** : PR de mise à jour des dépendances
 
 ### 🚀 `deployment.yml` - Déploiement
+
 **Déclenché par** : Release, manual avec sélection environnement
 **Durée** : ~30-60 minutes
 
@@ -46,14 +50,17 @@ Ce dossier contient tous les workflows GitHub Actions pour l'intégration contin
 ## 🔧 Configuration Requise
 
 ### 📋 Secrets Repository
+
 Consultez [`ACTIONS_SETUP.md`](./ACTIONS_SETUP.md) pour la liste complète des secrets requis.
 
 **Essentiels pour commencer** :
+
 - `GITHUB_TOKEN` (automatique)
 - `ANDROID_KEYSTORE` + mots de passe (pour Android)
 - `IOS_CERTIFICATE` + profils (pour iOS)
 
 ### 🌍 Environments
+
 - **staging** : Déploiements de test
 - **production** : Déploiements finaux avec approbation manuelle
 
@@ -70,6 +77,7 @@ Ajoutez ces badges à votre README principal :
 ## 🔄 Flux de Travail Recommandé
 
 ### 👨‍💻 Développement
+
 1. Créer une branche feature depuis `develop`
 2. Développer et commit (format conventional commits)
 3. Push et ouvrir une PR vers `develop`
@@ -77,12 +85,14 @@ Ajoutez ces badges à votre README principal :
 5. Review et merge après validation
 
 ### 🚀 Release
+
 1. Merge `develop` → `production_ready`
 2. **Workflow `ci-cd.yml`** se déclenche
 3. Créer une release GitHub
 4. **Workflow `deployment.yml`** déploie automatiquement
 
 ### 🔒 Maintenance
+
 - **Workflow `security.yml`** s'exécute chaque lundi
 - PRs automatiques pour les mises à jour de dépendances
 - Review mensuel des rapports de sécurité
@@ -90,16 +100,19 @@ Ajoutez ces badges à votre README principal :
 ## 📈 Métriques et Monitoring
 
 ### 🧪 Tests et Coverage
+
 - Tests unitaires exécutés sur chaque PR/push
 - Coverage reports sur Codecov
 - Seuil minimum : 70%
 
 ### 🔒 Sécurité
+
 - Scan hebdomadaire des vulnérabilités
 - Rapports SARIF dans l'onglet Security
 - Notifications automatiques des issues critiques
 
 ### ⚡ Performance
+
 - Temps de build trackés
 - Taille des artifacts monitorée
 - Rapports de performance dans les summaries
@@ -107,16 +120,19 @@ Ajoutez ces badges à votre README principal :
 ## 🆘 Troubleshooting
 
 ### ❌ Builds Failed
+
 1. Vérifier les logs dans l'onglet Actions
 2. Tester localement avec la même version Flutter
 3. Vérifier les dépendances et conflits
 
 ### 🔐 Secrets Issues
+
 1. Vérifier que tous les secrets requis sont configurés
 2. Tester la validité des certificats/clés
 3. Vérifier les permissions d'accès
 
 ### 🚀 Deployment Issues
+
 1. Vérifier la configuration des environnements
 2. Tester les credentials des stores
 3. Vérifier les profils de provisioning iOS

@@ -1,4 +1,3 @@
-
 // Provides advanced user management services for the Koutonou application.
 // This service handles user profiles, preferences, addresses, activity history,
 // favorites, and verification processes. Built on top of AuthService.

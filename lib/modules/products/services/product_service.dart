@@ -10,12 +10,12 @@ class ProductService {
   ProductService._internal();
 
   /// Simulation des méthodes de base
-  
+
   /// Récupère tous les products
   Future<List<Map<String, dynamic>>> getAll() async {
     // TODO: Implémenter l'appel API réel
     print('📡 Appel API: GET /products');
-    
+
     // Simulation de données
     return [
       {'id': 1, 'name': 'Exemple products 1'},
@@ -26,7 +26,7 @@ class ProductService {
   /// Récupère un ProductModel par son ID
   Future<Map<String, dynamic>?> getById(String id) async {
     print('📡 Appel API: GET /products/$id');
-    
+
     // Simulation
     return {'id': int.parse(id), 'name': 'Exemple products $id'};
   }
@@ -34,15 +34,18 @@ class ProductService {
   /// Crée un nouveau ProductModel
   Future<Map<String, dynamic>> create(Map<String, dynamic> data) async {
     print('📡 Appel API: POST /products');
-    
+
     // Simulation
     return {...data, 'id': DateTime.now().millisecondsSinceEpoch};
   }
 
   /// Met à jour un ProductModel
-  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> update(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     print('📡 Appel API: PUT /products/$id');
-    
+
     // Simulation
     return {...data, 'id': int.parse(id)};
   }
@@ -50,7 +53,7 @@ class ProductService {
   /// Supprime un ProductModel
   Future<bool> delete(String id) async {
     print('📡 Appel API: DELETE /products/$id');
-    
+
     // Simulation
     return true;
   }

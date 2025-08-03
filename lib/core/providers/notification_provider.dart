@@ -1,4 +1,3 @@
-
 // Manages the global notification state using ChangeNotifier for reactive UI updates.
 // Integrates with NotificationService for push notifications, settings, history,
 // and badge count management. Provides real-time streams and error handling.

@@ -7,16 +7,16 @@ part of 'countrymodel.dart';
 // **************************************************************************
 
 CountryModel _$CountryModelFromJson(Map<String, dynamic> json) => CountryModel(
-      id: const IntStringConverter().fromJson(json['id']),
-      id_zone: const IntStringConverter().fromJson(json['id_zone']),
-      call_prefix: const IntStringConverter().fromJson(json['call_prefix']),
-      iso_code: json['iso_code'] as String?,
-      need_zip_code: json['need_zip_code'] as String?,
-      zip_code_format: json['zip_code_format'] as String?,
-      display_tax_label: json['display_tax_label'] as String?,
-      name: json['name'] as String?,
-      active: const IntStringConverter().fromJson(json['active']),
-    );
+  id: const IntStringConverter().fromJson(json['id']),
+  id_zone: const IntStringConverter().fromJson(json['id_zone']),
+  call_prefix: const IntStringConverter().fromJson(json['call_prefix']),
+  iso_code: json['iso_code'] as String?,
+  need_zip_code: json['need_zip_code'] as String?,
+  zip_code_format: json['zip_code_format'] as String?,
+  display_tax_label: json['display_tax_label'] as String?,
+  name: json['name'] as String?,
+  active: const IntStringConverter().fromJson(json['active']),
+);
 
 Map<String, dynamic> _$CountryModelToJson(CountryModel instance) =>
     <String, dynamic>{
