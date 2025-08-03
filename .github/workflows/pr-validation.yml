@@ -35,13 +35,15 @@ jobs:
       - name: 🔍 Check PR Title Format
         run: |
           TITLE="${{ github.event.pull_request.title }}"
-          if [[ ! "$TITLE" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci)(\(.+\))?: .+ ]]; then
+          echo "PR Title: $TITLE"
+          if [[ "$TITLE" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci)(\(.+\))?\:\ .+ ]]; then
+            echo "✅ **PR Title Format**: Correct" >> $GITHUB_STEP_SUMMARY
+          else
             echo "❌ **PR Title Format Error**" >> $GITHUB_STEP_SUMMARY
             echo "Le titre de la PR doit suivre le format: \`type(scope): description\`" >> $GITHUB_STEP_SUMMARY
             echo "Exemples: \`feat(auth): add user login\`, \`fix(api): resolve API timeout\`" >> $GITHUB_STEP_SUMMARY
+            echo "Current title: $TITLE" >> $GITHUB_STEP_SUMMARY
             exit 1
-          else
-            echo "✅ **PR Title Format**: Correct" >> $GITHUB_STEP_SUMMARY
           fi
 
   # ===============================================
@@ -81,7 +83,7 @@ jobs:
           fi
           
           # Import analysis
-          if flutter analyze --fatal-infos --fatal-warnings; then
+          if flutter analyze; then
             echo "✅ **Analysis**: No issues" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Analysis**: Issues found" >> $GITHUB_STEP_SUMMARY

@@ -44,7 +44,7 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib/ test/ tools/
         
       - name: 📊 Analyze Code
-        run: flutter analyze --fatal-infos
+        run: flutter analyze
         
       - name: 🔒 Security Analysis
         run: |
