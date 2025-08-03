@@ -86,28 +86,20 @@ Cette page centralise toute la documentation du projet **Koutonou** - plateforme
 
 ## ⚙️ Scripts & Outils
 
-### 🔧 **Scripts de Validation**
-
-```bash
-# Tests architecture core
-./test_core_architecture.sh
-
-# Validation MVP Phase 1
-./run_mvp_phase1.sh
-```
-
-### 🛠️ **Outils de Génération**
+### ️ **Outils de Génération**
 
 ```bash
 # Générateur de modules
-./tools/generate.dart
+dart run tools/generate.dart
 
 # Générateur simplifié
-./tools/simple_generate.dart
-
-# Tests automatisés
-./tools/test_generator.dart
+dart run tools/simple_generate.dart
 ```
+
+### 🔧 **Scripts de Validation**
+
+Les scripts de test MVP ont été supprimés lors de la transition vers la branche production.
+Utilisez `flutter analyze` et `flutter test` pour la validation du code.
 
 ---
 
@@ -122,10 +114,9 @@ docs/
 ├── 🏆 MVP_PHASE1_SUCCESS_REPORT.md  # Rapport succès Phase 1
 ├── 🧪 ROUTER_TEST_GUIDE.md          # Guide tests complet
 ├── 📚 DOCUMENTATION_INDEX.md        # Ce fichier (navigation)
-└── 🔧 Scripts & Tools
-    ├── test_core_architecture.sh    # Validation architecture
-    ├── run_mvp_phase1.sh            # Tests MVP
-    └── tools/                       # Outils développement
+└── 🔧 Tools (Générateurs de code)
+    ├── tools/generate.dart          # Générateur principal
+    └── tools/simple_generate.dart   # Générateur simplifié
 ```
 
 ---
@@ -148,8 +139,8 @@ docs/
 ### 🧪 **QA/Testing Teams**
 
 1. **Test Guide** : [ROUTER_TEST_GUIDE.md](./ROUTER_TEST_GUIDE.md)
-2. **Test Scripts** : `./test_core_architecture.sh`
-3. **MVP Validation** : `./run_mvp_phase1.sh`
+2. **Flutter Tests** : `flutter test`
+3. **Code Analysis** : `flutter analyze`
 
 ### 🏗️ **Architecture/Tech Leads**
 
@@ -184,20 +175,29 @@ Pour chaque nouvelle feature/module :
 
 ## 🎯 Status Actuel
 
-### ✅ **Documentation Complete (Phase 1)**
+### ✅ **Production Ready (Transition Phase 1 → Phase 2)**
 
 - [x] **Architecture documentée** : 100%
 - [x] **MVP validé et documenté** : 100%
-- [x] **Tests documentés** : 100%
-- [x] **Guides développeur** : 100%
-- [x] **Navigation centralisée** : 100%
+- [x] **Code de test/POC nettoyé** : 100%
+- [x] **Navigation production** : 100%
+- [x] **Documentation mise à jour** : 100%
 
-### 🚧 **À Mettre à Jour (Phase 2)**
+### 🚀 **Prêt pour Phase 2**
 
-- [ ] **Modules products/customers/carts/orders**
-- [ ] **Guides API spécifiques**
-- [ ] **Documentation déploiement**
-- [ ] **Guide contribution étendu**
+- [x] **Codebase clean** : Zéro test/POC restant
+- [x] **Router production** : Navigation business uniquement
+- [x] **Flutter analyze** : 0 erreur, warnings acceptables
+- [x] **Branche production_ready** : Commit 13fccd8
+
+### 🚧 **À Développer (Phase 2)**
+
+- [ ] **Module Products** : Listing, détails, recherche
+- [ ] **Module Customers** : Gestion profil, auth
+- [ ] **Module Carts** : Panier, checkout
+- [ ] **Module Orders** : Commandes, historique
+- [ ] **UI/UX** : Design system, thème
+- [ ] **Tests unitaires** : Coverage > 80%
 
 ---
 
