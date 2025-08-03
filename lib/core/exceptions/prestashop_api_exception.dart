@@ -27,9 +27,8 @@ class PrestashopApiException implements Exception {
     this.response,
     this.errorDetails,
     this.originalException,
-  }) : timestamp = const Duration(milliseconds: 0).inMilliseconds == 0 
-           ? const Duration(milliseconds: 0) 
-           : DateTime.now();
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.now();
 
   /// Type d'erreur basé sur le code de statut
   PrestashopApiErrorType get errorType {

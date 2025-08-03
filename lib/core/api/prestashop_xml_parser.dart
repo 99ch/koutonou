@@ -271,7 +271,8 @@ class PrestashopApiResponse<T> {
     required this.data,
     this.meta = const {},
     this.originalDocument,
-  }) : timestamp = DateTime.now();
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.now();
 
   /// Vérifier si la réponse contient des données
   bool get hasData {

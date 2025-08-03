@@ -44,6 +44,8 @@ dependencies:
   logger: ^2.0.2 # Logging utility
   http_certificate_pinning: ^3.0.0 # Certificate pinning for secure HTTPS
   dio: ^5.7.0 # HTTP client for API requests
+  http: ^1.1.0 # HTTP client for PrestaShop API
+  xml: ^6.5.0 # XML parsing for PrestaShop responses
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.4 # For file system access (needed by cache_service)
