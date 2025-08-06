@@ -1,0 +1,72 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    name: Run Tests & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.x"
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🔍 Analyze code
+        run: flutter analyze
+
+      - name: 🧪 Run Tests with Coverage
+        run: flutter test --coverage
+
+      - name: 📤 Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+
+      - name: 🏗️ Build Flutter Web
+        run: flutter build web --release
+
+      - name: 📤 Upload Web Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-web
+          path: build/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧰 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.x"
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🏗️ Build Flutter Web
+        run: flutter build web --release --base-href "/koutonou/"
+
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/web
