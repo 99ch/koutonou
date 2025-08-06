@@ -43,7 +43,9 @@ void testSpecificPrice() {
   final specificPrice = SpecificPrice.fromPrestaShopJson(json);
   print('✓ Création depuis JSON: ${specificPrice.id}');
   print('✓ Produit: ${specificPrice.idProduct}');
-  print('✓ Réduction: ${specificPrice.reduction}% ${specificPrice.reductionTypeDescription}');
+  print(
+    '✓ Réduction: ${specificPrice.reduction}% ${specificPrice.reductionTypeDescription}',
+  );
   print('✓ Période: ${specificPrice.from} → ${specificPrice.to}');
   print('✓ Active: ${specificPrice.isActive}');
 
@@ -54,7 +56,9 @@ void testSpecificPrice() {
 
   // Test conversion XML
   final xml = specificPrice.toPrestaShopXml();
-  print('✓ Conversion XML: ${xml.contains('<specific_price>') ? 'OK' : 'FAIL'}');
+  print(
+    '✓ Conversion XML: ${xml.contains('<specific_price>') ? 'OK' : 'FAIL'}',
+  );
 
   print('✅ SpecificPrice testé avec succès\n');
 }
@@ -95,7 +99,9 @@ void testSpecificPriceRule() {
 
   // Test conversion XML
   final xml = rule.toPrestaShopXml();
-  print('✓ Conversion XML: ${xml.contains('<specific_price_rule>') ? 'OK' : 'FAIL'}');
+  print(
+    '✓ Conversion XML: ${xml.contains('<specific_price_rule>') ? 'OK' : 'FAIL'}',
+  );
 
   print('✅ SpecificPriceRule testé avec succès\n');
 }
@@ -121,15 +127,15 @@ void testCombination() {
         'product_option_value': [
           {'id': '11'}, // Couleur: Rouge
           {'id': '22'}, // Taille: XL
-        ]
+        ],
       },
       'images': {
         'image': [
           {'id': '33'},
           {'id': '44'},
-        ]
-      }
-    }
+        ],
+      },
+    },
   };
 
   // Test création depuis JSON
@@ -154,7 +160,9 @@ void testCombination() {
 
   // Test associations
   if (combination.productOptionValueIds != null) {
-    print('✓ Valeurs d\'options: ${combination.productOptionValueIds!.join(', ')}');
+    print(
+      '✓ Valeurs d\'options: ${combination.productOptionValueIds!.join(', ')}',
+    );
   }
   if (combination.imageIds != null) {
     print('✓ Images: ${combination.imageIds!.join(', ')}');

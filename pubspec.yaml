@@ -51,6 +51,7 @@ dependencies:
   shared_preferences: ^2.3.2 # For persistent storage in cache system
   json_annotation: ^4.8.1 # For JSON serialization annotations
   image_picker: ^1.0.7 # For image selection from gallery/camera
+  equatable: ^2.0.5 # For value equality in models
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

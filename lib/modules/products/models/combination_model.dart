@@ -21,7 +21,7 @@ class Combination {
   final bool? lowStockAlert;
   final bool? defaultOn;
   final DateTime? availableDate;
-  
+
   // Associations
   final List<int>? productOptionValueIds;
   final List<int>? imageIds;
@@ -59,21 +59,24 @@ class Combination {
 
     if (json['associations'] is Map) {
       final associations = json['associations'] as Map<String, dynamic>;
-      
+
       // Product option values
       if (associations['product_option_values'] is Map) {
-        final povData = associations['product_option_values'] as Map<String, dynamic>;
+        final povData =
+            associations['product_option_values'] as Map<String, dynamic>;
         if (povData['product_option_value'] is List) {
           optionValueIds = (povData['product_option_value'] as List)
               .map((item) => int.tryParse(item['id']?.toString() ?? '0') ?? 0)
               .where((id) => id > 0)
               .toList();
         } else if (povData['product_option_value'] is Map) {
-          final id = int.tryParse(povData['product_option_value']['id']?.toString() ?? '0');
+          final id = int.tryParse(
+            povData['product_option_value']['id']?.toString() ?? '0',
+          );
           if (id != null && id > 0) optionValueIds = [id];
         }
       }
-      
+
       // Images
       if (associations['images'] is Map) {
         final imgData = associations['images'] as Map<String, dynamic>;
@@ -100,13 +103,20 @@ class Combination {
       quantity: int.tryParse(json['quantity']?.toString() ?? '0'),
       reference: json['reference']?.toString(),
       supplierReference: json['supplier_reference']?.toString(),
-      wholesalePrice: double.tryParse(json['wholesale_price']?.toString() ?? '0'),
+      wholesalePrice: double.tryParse(
+        json['wholesale_price']?.toString() ?? '0',
+      ),
       price: double.tryParse(json['price']?.toString() ?? '0'),
       ecotax: double.tryParse(json['ecotax']?.toString() ?? '0'),
       weight: double.tryParse(json['weight']?.toString() ?? '0'),
-      unitPriceImpact: double.tryParse(json['unit_price_impact']?.toString() ?? '0'),
-      minimalQuantity: int.tryParse(json['minimal_quantity']?.toString() ?? '1') ?? 1,
-      lowStockThreshold: int.tryParse(json['low_stock_threshold']?.toString() ?? '0'),
+      unitPriceImpact: double.tryParse(
+        json['unit_price_impact']?.toString() ?? '0',
+      ),
+      minimalQuantity:
+          int.tryParse(json['minimal_quantity']?.toString() ?? '1') ?? 1,
+      lowStockThreshold: int.tryParse(
+        json['low_stock_threshold']?.toString() ?? '0',
+      ),
       lowStockAlert: json['low_stock_alert']?.toString() == '1',
       defaultOn: json['default_on']?.toString() == '1',
       availableDate: _parseDate(json['available_date']),
@@ -117,7 +127,9 @@ class Combination {
 
   /// Parse une date depuis PrestaShop
   static DateTime? _parseDate(dynamic value) {
-    if (value == null || value.toString().isEmpty || value.toString() == '0000-00-00') {
+    if (value == null ||
+        value.toString().isEmpty ||
+        value.toString() == '0000-00-00') {
       return null;
     }
     try {
@@ -142,35 +154,41 @@ class Combination {
     if (mpn != null) json['mpn'] = mpn;
     if (quantity != null) json['quantity'] = quantity.toString();
     if (reference != null) json['reference'] = reference;
-    if (supplierReference != null) json['supplier_reference'] = supplierReference;
-    if (wholesalePrice != null) json['wholesale_price'] = wholesalePrice.toString();
+    if (supplierReference != null)
+      json['supplier_reference'] = supplierReference;
+    if (wholesalePrice != null)
+      json['wholesale_price'] = wholesalePrice.toString();
     if (price != null) json['price'] = price.toString();
     if (ecotax != null) json['ecotax'] = ecotax.toString();
     if (weight != null) json['weight'] = weight.toString();
-    if (unitPriceImpact != null) json['unit_price_impact'] = unitPriceImpact.toString();
-    if (lowStockThreshold != null) json['low_stock_threshold'] = lowStockThreshold.toString();
-    if (lowStockAlert != null) json['low_stock_alert'] = lowStockAlert! ? '1' : '0';
+    if (unitPriceImpact != null)
+      json['unit_price_impact'] = unitPriceImpact.toString();
+    if (lowStockThreshold != null)
+      json['low_stock_threshold'] = lowStockThreshold.toString();
+    if (lowStockAlert != null)
+      json['low_stock_alert'] = lowStockAlert! ? '1' : '0';
     if (defaultOn != null) json['default_on'] = defaultOn! ? '1' : '0';
-    if (availableDate != null) json['available_date'] = _formatDate(availableDate!);
+    if (availableDate != null)
+      json['available_date'] = _formatDate(availableDate!);
 
     // Associations
     if (productOptionValueIds != null || imageIds != null) {
       final associations = <String, dynamic>{};
-      
+
       if (productOptionValueIds != null) {
         associations['product_option_values'] = {
           'product_option_value': productOptionValueIds!
               .map((id) => {'id': id.toString()})
-              .toList()
+              .toList(),
         };
       }
-      
+
       if (imageIds != null) {
         associations['images'] = {
-          'image': imageIds!.map((id) => {'id': id.toString()}).toList()
+          'image': imageIds!.map((id) => {'id': id.toString()}).toList(),
         };
       }
-      
+
       json['associations'] = associations;
     }
 
@@ -184,29 +202,57 @@ class Combination {
 
     if (id != null) buffer.writeln('  <id><![CDATA[$id]]></id>');
     buffer.writeln('  <id_product><![CDATA[$idProduct]]></id_product>');
-    if (location != null) buffer.writeln('  <location><![CDATA[$location]]></location>');
+    if (location != null)
+      buffer.writeln('  <location><![CDATA[$location]]></location>');
     if (ean13 != null) buffer.writeln('  <ean13><![CDATA[$ean13]]></ean13>');
     if (isbn != null) buffer.writeln('  <isbn><![CDATA[$isbn]]></isbn>');
     if (upc != null) buffer.writeln('  <upc><![CDATA[$upc]]></upc>');
     if (mpn != null) buffer.writeln('  <mpn><![CDATA[$mpn]]></mpn>');
-    if (quantity != null) buffer.writeln('  <quantity><![CDATA[$quantity]]></quantity>');
-    if (reference != null) buffer.writeln('  <reference><![CDATA[$reference]]></reference>');
-    if (supplierReference != null) buffer.writeln('  <supplier_reference><![CDATA[$supplierReference]]></supplier_reference>');
-    if (wholesalePrice != null) buffer.writeln('  <wholesale_price><![CDATA[$wholesalePrice]]></wholesale_price>');
+    if (quantity != null)
+      buffer.writeln('  <quantity><![CDATA[$quantity]]></quantity>');
+    if (reference != null)
+      buffer.writeln('  <reference><![CDATA[$reference]]></reference>');
+    if (supplierReference != null)
+      buffer.writeln(
+        '  <supplier_reference><![CDATA[$supplierReference]]></supplier_reference>',
+      );
+    if (wholesalePrice != null)
+      buffer.writeln(
+        '  <wholesale_price><![CDATA[$wholesalePrice]]></wholesale_price>',
+      );
     if (price != null) buffer.writeln('  <price><![CDATA[$price]]></price>');
-    if (ecotax != null) buffer.writeln('  <ecotax><![CDATA[$ecotax]]></ecotax>');
-    if (weight != null) buffer.writeln('  <weight><![CDATA[$weight]]></weight>');
-    if (unitPriceImpact != null) buffer.writeln('  <unit_price_impact><![CDATA[$unitPriceImpact]]></unit_price_impact>');
-    buffer.writeln('  <minimal_quantity><![CDATA[$minimalQuantity]]></minimal_quantity>');
-    if (lowStockThreshold != null) buffer.writeln('  <low_stock_threshold><![CDATA[$lowStockThreshold]]></low_stock_threshold>');
-    if (lowStockAlert != null) buffer.writeln('  <low_stock_alert><![CDATA[${lowStockAlert! ? '1' : '0'}]]></low_stock_alert>');
-    if (defaultOn != null) buffer.writeln('  <default_on><![CDATA[${defaultOn! ? '1' : '0'}]]></default_on>');
-    if (availableDate != null) buffer.writeln('  <available_date><![CDATA[${_formatDate(availableDate!)}]]></available_date>');
+    if (ecotax != null)
+      buffer.writeln('  <ecotax><![CDATA[$ecotax]]></ecotax>');
+    if (weight != null)
+      buffer.writeln('  <weight><![CDATA[$weight]]></weight>');
+    if (unitPriceImpact != null)
+      buffer.writeln(
+        '  <unit_price_impact><![CDATA[$unitPriceImpact]]></unit_price_impact>',
+      );
+    buffer.writeln(
+      '  <minimal_quantity><![CDATA[$minimalQuantity]]></minimal_quantity>',
+    );
+    if (lowStockThreshold != null)
+      buffer.writeln(
+        '  <low_stock_threshold><![CDATA[$lowStockThreshold]]></low_stock_threshold>',
+      );
+    if (lowStockAlert != null)
+      buffer.writeln(
+        '  <low_stock_alert><![CDATA[${lowStockAlert! ? '1' : '0'}]]></low_stock_alert>',
+      );
+    if (defaultOn != null)
+      buffer.writeln(
+        '  <default_on><![CDATA[${defaultOn! ? '1' : '0'}]]></default_on>',
+      );
+    if (availableDate != null)
+      buffer.writeln(
+        '  <available_date><![CDATA[${_formatDate(availableDate!)}]]></available_date>',
+      );
 
     // Associations
     if (productOptionValueIds != null || imageIds != null) {
       buffer.writeln('  <associations>');
-      
+
       if (productOptionValueIds != null) {
         buffer.writeln('    <product_option_values>');
         for (final id in productOptionValueIds!) {
@@ -216,7 +262,7 @@ class Combination {
         }
         buffer.writeln('    </product_option_values>');
       }
-      
+
       if (imageIds != null) {
         buffer.writeln('    <images>');
         for (final id in imageIds!) {
@@ -226,7 +272,7 @@ class Combination {
         }
         buffer.writeln('    </images>');
       }
-      
+
       buffer.writeln('  </associations>');
     }
 
@@ -251,7 +297,8 @@ class Combination {
   /// Obtient la référence complète (référence produit ou fournisseur)
   String get fullReference {
     if (reference != null && reference!.isNotEmpty) return reference!;
-    if (supplierReference != null && supplierReference!.isNotEmpty) return supplierReference!;
+    if (supplierReference != null && supplierReference!.isNotEmpty)
+      return supplierReference!;
     return 'Sans référence';
   }
 

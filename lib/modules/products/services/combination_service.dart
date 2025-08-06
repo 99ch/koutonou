@@ -7,7 +7,7 @@ class CombinationService extends BasePrestaShopService {
   static final CombinationService _instance = CombinationService._internal();
   factory CombinationService() => _instance;
   CombinationService._internal();
-  
+
   static final AppLogger _logger = AppLogger();
 
   /// Récupère toutes les combinaisons
@@ -21,11 +21,11 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Fetching all combinations from PrestaShop API');
-    
+
     try {
       final queryParams = <String, dynamic>{};
       queryParams['display'] = display ?? 'full';
-      
+
       if (filters != null) queryParams.addAll(filters);
       if (sort != null) queryParams['sort'] = sort.join(',');
       if (limit != null) queryParams['limit'] = limit.toString();
@@ -43,11 +43,15 @@ class CombinationService extends BasePrestaShopService {
         if (data['combinations'] is List) {
           final combinationsList = data['combinations'] as List;
           return combinationsList
-              .map((json) => Combination.fromPrestaShopJson(json as Map<String, dynamic>))
+              .map(
+                (json) => Combination.fromPrestaShopJson(
+                  json as Map<String, dynamic>,
+                ),
+              )
               .toList();
         }
       }
-      
+
       return [];
     } catch (e) {
       _logger.error('Error fetching all combinations: $e');
@@ -62,12 +66,10 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Fetching combination by ID: $combinationId');
-    
+
     try {
-      final queryParams = <String, dynamic>{
-        'display': 'full',
-      };
-      
+      final queryParams = <String, dynamic>{'display': 'full'};
+
       if (language != null) queryParams['language'] = language;
       if (idShop != null) queryParams['id_shop'] = idShop.toString();
 
@@ -84,7 +86,7 @@ class CombinationService extends BasePrestaShopService {
           );
         }
       }
-      
+
       return null;
     } catch (e) {
       _logger.error('Error fetching combination by ID $combinationId: $e');
@@ -99,7 +101,7 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Fetching combinations for product: $productId');
-    
+
     return await getAllCombinations(
       filters: {'id_product': productId.toString()},
       language: language,
@@ -134,7 +136,11 @@ class CombinationService extends BasePrestaShopService {
         if (data['combinations'] is List) {
           final combinationsList = data['combinations'] as List;
           return combinationsList
-              .map((json) => Combination.fromPrestaShopJson(json as Map<String, dynamic>))
+              .map(
+                (json) => Combination.fromPrestaShopJson(
+                  json as Map<String, dynamic>,
+                ),
+              )
               .toList();
         }
       }
@@ -164,7 +170,7 @@ class CombinationService extends BasePrestaShopService {
   /// Crée une nouvelle combinaison
   Future<Combination?> createCombination(Combination combination) async {
     _logger.info('Creating combination for product: ${combination.idProduct}');
-    
+
     try {
       final response = await post<Map<String, dynamic>>(
         'combinations',
@@ -177,10 +183,14 @@ class CombinationService extends BasePrestaShopService {
 
         if (data['combination'] is Map<String, dynamic>) {
           final combinationData = data['combination'] as Map<String, dynamic>;
-          final combinationId = int.tryParse(combinationData['id']?.toString() ?? '0');
+          final combinationId = int.tryParse(
+            combinationData['id']?.toString() ?? '0',
+          );
 
           if (combinationId != null && combinationId > 0) {
-            _logger.info('Combination created with ID: $combinationId, fetching full details...');
+            _logger.info(
+              'Combination created with ID: $combinationId, fetching full details...',
+            );
             return await getCombinationById(combinationId);
           }
         }
@@ -213,10 +223,14 @@ class CombinationService extends BasePrestaShopService {
 
         if (data['combination'] is Map<String, dynamic>) {
           final combinationData = data['combination'] as Map<String, dynamic>;
-          final combinationId = int.tryParse(combinationData['id']?.toString() ?? '0');
+          final combinationId = int.tryParse(
+            combinationData['id']?.toString() ?? '0',
+          );
 
           if (combinationId != null && combinationId > 0) {
-            _logger.info('Combination updated with ID: $combinationId, fetching full details...');
+            _logger.info(
+              'Combination updated with ID: $combinationId, fetching full details...',
+            );
             return await getCombinationById(combinationId);
           }
         }
@@ -244,7 +258,9 @@ class CombinationService extends BasePrestaShopService {
 
   /// Met à jour le stock d'une combinaison
   Future<bool> updateCombinationStock(int combinationId, int quantity) async {
-    _logger.info('Updating stock for combination: $combinationId, quantity: $quantity');
+    _logger.info(
+      'Updating stock for combination: $combinationId, quantity: $quantity',
+    );
 
     try {
       final response = await put<Map<String, dynamic>>(
@@ -268,16 +284,16 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Fetching available combinations');
-    
+
     final filters = <String, String>{};
     if (productId != null) filters['id_product'] = productId.toString();
-    
+
     final allCombinations = await getAllCombinations(
       filters: filters.isNotEmpty ? filters : null,
       language: language,
       idShop: idShop,
     );
-    
+
     // Filtrer les combinaisons en stock
     return allCombinations.where((combination) => combination.inStock).toList();
   }
@@ -289,18 +305,20 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Fetching out of stock combinations');
-    
+
     final filters = <String, String>{};
     if (productId != null) filters['id_product'] = productId.toString();
-    
+
     final allCombinations = await getAllCombinations(
       filters: filters.isNotEmpty ? filters : null,
       language: language,
       idShop: idShop,
     );
-    
+
     // Filtrer les combinaisons en rupture de stock
-    return allCombinations.where((combination) => !combination.inStock).toList();
+    return allCombinations
+        .where((combination) => !combination.inStock)
+        .toList();
   }
 
   /// Récupère la combinaison par défaut d'un produit
@@ -310,16 +328,18 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Fetching default combination for product: $productId');
-    
+
     final combinations = await getCombinationsByProduct(
       productId,
       language: language,
       idShop: idShop,
     );
-    
+
     // Chercher la combinaison par défaut
     try {
-      return combinations.firstWhere((combination) => combination.defaultOn == 1);
+      return combinations.firstWhere(
+        (combination) => combination.defaultOn == 1,
+      );
     } catch (e) {
       // Si aucune combinaison par défaut, retourner la première disponible
       if (combinations.isNotEmpty) {
@@ -337,17 +357,17 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Calculating price for combination: $combinationId');
-    
+
     final combination = await getCombinationById(
       combinationId,
       language: language,
       idShop: idShop,
     );
-    
+
     if (combination != null) {
       return combination.calculateFinalPrice(basePrice);
     }
-    
+
     return basePrice;
   }
 
@@ -358,21 +378,22 @@ class CombinationService extends BasePrestaShopService {
     int? idShop,
   }) async {
     _logger.info('Fetching combinations with images');
-    
+
     final filters = <String, String>{};
     if (productId != null) filters['id_product'] = productId.toString();
-    
+
     final allCombinations = await getAllCombinations(
       filters: filters.isNotEmpty ? filters : null,
       language: language,
       idShop: idShop,
     );
-    
+
     // Filtrer les combinaisons avec des images
     return allCombinations
-        .where((combination) => 
-            combination.imageIds != null && 
-            combination.imageIds!.isNotEmpty)
+        .where(
+          (combination) =>
+              combination.imageIds != null && combination.imageIds!.isNotEmpty,
+        )
         .toList();
   }
 }

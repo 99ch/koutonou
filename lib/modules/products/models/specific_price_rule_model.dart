@@ -52,7 +52,9 @@ class SpecificPriceRule {
 
   /// Parse une date depuis PrestaShop
   static DateTime? _parseDate(dynamic value) {
-    if (value == null || value.toString().isEmpty || value.toString() == '0000-00-00 00:00:00') {
+    if (value == null ||
+        value.toString().isEmpty ||
+        value.toString() == '0000-00-00 00:00:00') {
       return null;
     }
     try {
@@ -95,14 +97,22 @@ class SpecificPriceRule {
     buffer.writeln('  <id_currency><![CDATA[$idCurrency]]></id_currency>');
     buffer.writeln('  <id_group><![CDATA[$idGroup]]></id_group>');
     buffer.writeln('  <name><![CDATA[$name]]></name>');
-    buffer.writeln('  <from_quantity><![CDATA[$fromQuantity]]></from_quantity>');
+    buffer.writeln(
+      '  <from_quantity><![CDATA[$fromQuantity]]></from_quantity>',
+    );
     buffer.writeln('  <price><![CDATA[$price]]></price>');
     buffer.writeln('  <reduction><![CDATA[$reduction]]></reduction>');
-    buffer.writeln('  <reduction_tax><![CDATA[${reductionTax ? '1' : '0'}]]></reduction_tax>');
-    buffer.writeln('  <reduction_type><![CDATA[$reductionType]]></reduction_type>');
-    
-    if (from != null) buffer.writeln('  <from><![CDATA[${_formatDate(from!)}]]></from>');
-    if (to != null) buffer.writeln('  <to><![CDATA[${_formatDate(to!)}]]></to>');
+    buffer.writeln(
+      '  <reduction_tax><![CDATA[${reductionTax ? '1' : '0'}]]></reduction_tax>',
+    );
+    buffer.writeln(
+      '  <reduction_type><![CDATA[$reductionType]]></reduction_type>',
+    );
+
+    if (from != null)
+      buffer.writeln('  <from><![CDATA[${_formatDate(from!)}]]></from>');
+    if (to != null)
+      buffer.writeln('  <to><![CDATA[${_formatDate(to!)}]]></to>');
 
     buffer.writeln('</specific_price_rule>');
     return buffer.toString();
@@ -116,10 +126,10 @@ class SpecificPriceRule {
   /// Vérifie si la règle de prix est active
   bool get isActive {
     final now = DateTime.now();
-    
+
     if (from != null && now.isBefore(from!)) return false;
     if (to != null && now.isAfter(to!)) return false;
-    
+
     return true;
   }
 
@@ -138,9 +148,9 @@ class SpecificPriceRule {
   /// Calcule le prix final avec la règle
   double calculateFinalPrice(double originalPrice) {
     if (!isActive) return originalPrice;
-    
+
     if (price > 0) return price; // Prix fixe défini
-    
+
     if (reductionType == 'percentage') {
       return originalPrice * (1 - (reduction / 100));
     } else {
@@ -164,7 +174,7 @@ class SpecificPriceRule {
   /// Obtient la description de la réduction
   String get reductionDescription {
     if (reduction == 0) return 'Aucune réduction';
-    
+
     if (reductionType == 'percentage') {
       return '${reduction.toStringAsFixed(1)}% de réduction';
     } else {
